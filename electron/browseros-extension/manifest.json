@@ -1,0 +1,28 @@
+{
+  "manifest_version": 3,
+  "name": "Windrise 助手",
+  "version": "1.9.0",
+  "description": "Windrise 账号窗口用的小插件：设 WebRTC 策略、读回代理设置、把两页并排，侧边栏管布局、连接、空间、钉住、Cookie 导入和插件同步，新标签页是仪表盘，空间用浏览器标签组。不开端口、不联网、不读页面内容。",
+  "permissions": ["privacy", "proxy", "tabs", "storage", "sidePanel", "tabGroups", "management", "cookies"],
+  "host_permissions": ["<all_urls>"],
+  "background": {
+    "service_worker": "sw.js"
+  },
+  "action": {
+    "default_title": "Windrise 侧边栏"
+  },
+  "side_panel": {
+    "default_path": "panel.html"
+  },
+  "chrome_url_overrides": {
+    "newtab": "newtab.html"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"],
+      "run_at": "document_idle",
+      "all_frames": false
+    }
+  ]
+}

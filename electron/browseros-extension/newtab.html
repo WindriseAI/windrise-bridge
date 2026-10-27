@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Windrise</title>
+  <link rel="stylesheet" href="dashboard.css">
+</head>
+<body>
+  <main class="newtab-wrap">
+    <form class="search" id="search-form">
+      <input id="search-input" type="search" autocomplete="off" spellcheck="false"
+             placeholder="搜索，或输入网址（例如 example.com）" aria-label="搜索或网址">
+      <button type="submit" class="primary">打开</button>
+    </form>
+    <div class="hint search-hint" id="search-hint">回车：像网址就直接打开，其他用 Google 搜索。</div>
+
+    <div class="newtab-grid">
+      <section class="card wide-card">
+        <h2>连接</h2>
+        <div class="kv"><span>状态</span><b id="conn-level">—</b></div>
+        <div class="kv"><span>公网地址</span><code id="conn-url">—</code></div>
+        <div class="kv"><span>授权</span><b id="conn-license">—</b></div>
+        <div class="row" id="license-activate-row" hidden>
+          <button type="button" class="danger" data-action="show-settings">隧道需要激活 · 打开设置</button>
+        </div>
+        <div class="hint">地址里不带口令；口令只放在客户端的 Authorization: Bearer 请求头里。浏览器和本机 MCP 免费；隧道需要激活。</div>
+      </section>
+
+      <section class="card">
+        <h2>打开的格子</h2>
+        <div class="list" id="grid-list"></div>
+        <div class="hint">点一个格子把它摆回屏幕内。</div>
+      </section>
+
+      <section class="card">
+        <h2>推荐</h2>
+        <a class="recommend-link" id="recommend-link" rel="noopener noreferrer">
+          <span class="recommend-title" id="recommend-title">暂无推荐</span>
+          <span class="recommend-desc" id="recommend-desc"></span>
+        </a>
+      </section>
+    </div>
+
+    <div class="footer" id="updated">主程序还没推送状态。</div>
+  </main>
+  <script src="dashboard.js"></script>
+  <script src="newtab.js"></script>
+</body>
+</html>

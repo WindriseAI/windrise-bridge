@@ -1,0 +1,407 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Windrise Bridge — 手机一句话，电脑就开工</title>
+<meta name="description" content="人不在电脑前也行。在手机上的 ChatGPT、Claude 里说一句，家里那台 Windows 电脑就用你登录好的浏览器、文件和终端把活干完。采用 AGPL-3.0-or-later 许可证。">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Windrise Bridge">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:title" content="Windrise Bridge — 手机一句话，电脑就开工">
+<meta property="og:description" content="在手机上的 AI 里说一句，家里的电脑就用你登录好的浏览器、文件和终端把活干完。">
+<meta property="og:url" content="https://bridge.windrise.si/">
+<meta property="og:image" content="https://bridge.windrise.si/assets/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Windrise Bridge — 手机一句话，电脑就开工">
+<meta name="twitter:description" content="在手机上的 AI 里说一句，家里的电脑就用你登录好的浏览器、文件和终端把活干完。">
+<meta name="twitter:image" content="https://bridge.windrise.si/assets/og.png">
+<link rel="canonical" href="https://bridge.windrise.si/">
+<meta name="theme-color" content="#f4f9fe">
+<link rel="icon" href="assets/favicon.ico" sizes="any">
+<link rel="icon" href="assets/icon-small.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+<link rel="preload" href="assets/fonts/sc-bold.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="style.css?v=20261025b">
+<script>document.documentElement.classList.add('js')</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Windrise Bridge","applicationCategory":"DeveloperApplication","operatingSystem":"Windows 10, Windows 11","license":"https://www.gnu.org/licenses/agpl-3.0.html","url":"https://bridge.windrise.si/","image":"https://bridge.windrise.si/assets/icon-512.png","inLanguage":"zh-CN","offers":{"@type":"Offer","price":"0","priceCurrency":"CNY"}}</script>
+</head>
+<body>
+<a class="skip" href="#main">跳到正文</a>
+
+<header class="bar" id="top">
+  <a class="bar__mark" href="#top" aria-label="Windrise Bridge 首页"><img src="assets/icon-small.svg" width="32" height="32" alt=""><span>Windrise <em>Bridge</em></span></a>
+  <nav class="bar__nav" aria-label="主导航">
+    <a href="#connect">怎么接上</a>
+    <a href="#browseros">搭配 BrowserOS</a>
+    <a href="#steady">断线自动恢复</a>
+    <a href="#trust">安全</a>
+    <a href="#faq">常见问题</a>
+  </nav>
+  <a class="button button--small" href="#download">下载</a>
+</header>
+
+<main id="main">
+
+<!-- 首屏：一条链。手机说一句 → 云风筝 → 一根线 → 你的电脑开工 -->
+<section class="hero" aria-labelledby="hero-title">
+  <div class="hero__text">
+    <h1 class="hero__title" id="hero-title" data-rise style="--i:0">手机一句话，<br>电脑就开工</h1>
+    <p class="hero__lede" data-rise style="--i:1">人不在电脑前也行。在手机上的 AI 里说一句，家里的电脑就用<span class="nw">你登录好的</span>浏览器、文件和终端把活干完。</p>
+    <div class="hero__actions" data-rise style="--i:2">
+      <a class="button" href="#connect">看看怎么接上</a>
+      <a class="textlink" href="#download">下载（新版即将发布）</a>
+    </div>
+    <p class="hero__facts" data-rise style="--i:3">免费 · Windows 10 / 11 · 电脑开着就能用 · 需要能加 MCP 连接的 AI</p>
+    <div class="tasks" data-rise style="--i:4">
+      <p class="tasks__label" id="tasks-label">在手机上试着派一件活：</p>
+      <div class="tasks__chips" role="radiogroup" aria-labelledby="tasks-label">
+        <button type="button" class="chip" role="radio" aria-checked="true" data-task="orders">导出今天的订单</button>
+        <button type="button" class="chip" role="radio" aria-checked="false" data-task="report">整理本周周报</button>
+        <button type="button" class="chip" role="radio" aria-checked="false" data-task="tests">跑测试发我结果</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="scene" aria-hidden="true">
+    <svg class="scene__art" viewBox="0 0 600 560">
+      <defs>
+        <filter id="s3" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="3"/></filter>
+        <filter id="s6" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="6"/></filter>
+        <filter id="s12" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="12"/></filter>
+        <filter id="srim" x="-10%" y="-10%" width="120%" height="120%"><feMorphology in="SourceAlpha" operator="erode" radius="1.3" result="e"/><feComposite in="SourceAlpha" in2="e" operator="out" result="ring"/><feFlood flood-color="#ffffff" flood-opacity=".85"/><feComposite in2="ring" operator="in"/></filter>
+        <mask id="skite" maskUnits="userSpaceOnUse" x="0" y="0" width="600" height="560"><g fill="#fff" transform="translate(218,-28) scale(1.7) rotate(-9 160 72)"><circle cx="130" cy="76" r="24"/><circle cx="161" cy="57" r="33"/><circle cx="192" cy="77" r="22"/><rect x="103" y="74" width="113" height="31" rx="15.5"/></g></mask>
+        <linearGradient id="sglass" gradientUnits="userSpaceOnUse" x1="390" y1="10" x2="580" y2="160"><stop offset="0" stop-color="#eef8ff"/><stop offset=".45" stop-color="#a3d3fb"/><stop offset="1" stop-color="#4699ee"/></linearGradient>
+        <linearGradient id="srimfade" gradientUnits="userSpaceOnUse" x1="390" y1="10" x2="580" y2="160"><stop offset="0" stop-color="#fff"/><stop offset=".55" stop-color="#fff" stop-opacity=".5"/><stop offset="1" stop-color="#fff" stop-opacity=".1"/></linearGradient>
+        <mask id="srimmask" maskUnits="userSpaceOnUse" x="0" y="0" width="600" height="560"><rect width="600" height="560" fill="url(#srimfade)"/></mask>
+        <linearGradient id="swhite" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#e2eefa"/></linearGradient>
+        <linearGradient id="sscreen" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f6fbff"/><stop offset="1" stop-color="#dcecfb"/></linearGradient>
+      </defs>
+      <!-- 手机：白色哑光，屏幕是浅蓝玻璃（话写在屏幕上，见下面的 .phone__msg） -->
+      <ellipse cx="96" cy="318" rx="58" ry="8" fill="#2f86dd" opacity=".18" filter="url(#s6)"/>
+      <rect x="22" y="44" width="148" height="268" rx="28" fill="url(#swhite)"/>
+      <rect x="32" y="58" width="128" height="240" rx="20" fill="url(#sscreen)"/>
+      <rect x="78" y="64" width="36" height="6" rx="3" fill="#cfe1f3"/>
+      <!-- 话从手机飞上天：一串小点 -->
+      <g fill="#7fbcf2">
+        <circle cx="182" cy="96" r="3"/><circle cx="208" cy="80" r="3.4"/><circle cx="236" cy="68" r="3.8"/><circle cx="266" cy="61" r="4.2"/><circle cx="298" cy="60" r="4.6"/>
+      </g>
+      <!-- 风筝线：从云下的系线点，带一点下垂，落到显示器顶边正中 -->
+      <path class="scene__string" d="M478 162 C474 228 372 214 352 300" fill="none" stroke="#7fbcf2" stroke-opacity=".35" stroke-width="10" stroke-linecap="round" filter="url(#s3)"/>
+      <path class="scene__string" d="M478 162 C474 228 372 214 352 300" fill="none" stroke="#ffffff" stroke-width="4" stroke-linecap="round"/>
+      <!-- 你的电脑：白色哑光显示器，和图标里的一样（屏幕上的内容见下面的 .monitor__screen） -->
+      <ellipse cx="352" cy="536" rx="120" ry="9" fill="#2f86dd" opacity=".2" filter="url(#s6)"/>
+      <rect x="168" y="296" width="368" height="210" rx="22" fill="url(#swhite)"/>
+      <rect x="182" y="310" width="340" height="182" rx="12" fill="url(#sscreen)"/>
+      <path d="M332 506 H372 L378 528 H326 Z" fill="#e3effb"/>
+      <rect x="292" y="526" width="120" height="10" rx="5" fill="#ffffff"/>
+      <circle cx="352" cy="298" r="5" fill="#ffffff"/>
+      <!-- 云风筝 -->
+      <g opacity=".22" filter="url(#s12)" transform="translate(232,-12) scale(1.7) rotate(-9 160 72)" fill="#2b7ad2"><circle cx="130" cy="76" r="24"/><circle cx="161" cy="57" r="33"/><circle cx="192" cy="77" r="22"/><rect x="103" y="74" width="113" height="31" rx="15.5"/></g>
+      <g class="scene__kite">
+        <path d="M564 132 C581 152 564 172 581 192 C594 208 581 228 594 248" fill="none" stroke="#ffffff" stroke-width="4" stroke-linecap="round"/>
+        <path d="M572 174 l14 -5 l-4 14 Z M584 218 l14 -4 l-5 14 Z" fill="#ffffff"/>
+        <g opacity=".92"><rect width="600" height="560" fill="url(#sglass)" mask="url(#skite)"/></g>
+        <g mask="url(#skite)">
+          <g transform="translate(218,-28) scale(1.7) rotate(-9 160 72)" fill="none" stroke="#ffffff" stroke-opacity=".42" stroke-width="1.6" stroke-linecap="round"><path d="M160 28 V103"/><path d="M108 80 Q160 68 212 80"/></g>
+          <ellipse cx="488" cy="160" rx="96" ry="20" fill="#2a7fd8" opacity=".35" filter="url(#s6)"/>
+          <ellipse cx="436" cy="52" rx="44" ry="16" transform="rotate(-28 436 52)" fill="#fff" opacity=".85" filter="url(#s3)"/>
+        </g>
+        <g mask="url(#srimmask)"><g filter="url(#srim)"><rect width="600" height="560" fill="#fff" mask="url(#skite)"/></g></g>
+        <circle cx="478" cy="162" r="5" fill="#ffffff"/>
+      </g>
+    </svg>
+
+    <div class="phone__msg" data-ui>
+      <span class="phone__who">你 · 在外面</span>
+      <p class="phone__text" data-bubble>导出今天的订单</p>
+    </div>
+    <p class="phone__reply" data-ui data-reply>好，已经连上你家里的电脑，正在做。</p>
+
+    <div class="monitor__screen" data-ui>
+      <p class="monitor__bar"><span class="dot dot--ok"></span>已连上你的电脑</p>
+      <ol class="monitor__log" data-log aria-live="polite">
+        <li>打开后台（已登录）</li>
+        <li>筛选「今天」</li>
+        <li>点「导出」</li>
+        <li class="is-done">27 单，已存到「下载」</li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<!-- 三步接上：你做什么，它回什么 -->
+<section class="connect" id="connect" aria-labelledby="connect-title">
+  <div class="connect__left">
+    <h2 class="section-title" id="connect-title" data-reveal>三步接上</h2>
+    <p class="connect__lede" data-reveal>第一次在电脑上装好、连上；之后人在哪，都能在手机上派活。</p>
+  </div>
+  <ol class="exchange">
+    <li data-reveal>
+      <p class="exchange__you">装上 Windrise Bridge 和 BrowserOS，给每个账号开一个窗口，你亲手登录。</p>
+      <p class="exchange__back">每个账号是一个独立的浏览器，登录态各存各的，互不串号。</p>
+    </li>
+    <li data-reveal>
+      <p class="exchange__you">点「一键连接」。</p>
+      <p class="exchange__back">几秒生成一个只属于你的网址（技术上叫隧道）。要长期在外面用，配一个固定地址，重连后网址也不会变。</p>
+    </li>
+    <li data-reveal>
+      <p class="exchange__you">在手机或网页上的 AI 里，把这个网址加成一个连接。</p>
+      <p class="exchange__back">ChatGPT、Claude 里叫「连接器」，用的是 MCP 这个 AI 接外部工具的通用插口。加好以后，AI 就能用这台电脑的浏览器、文件和终端。</p>
+      <figure class="addconn" data-ui>
+        <p class="addconn__title">添加连接</p>
+        <span class="addconn__label">名称</span><span class="addconn__field">Windrise Bridge</span>
+        <span class="addconn__label">网址</span><span class="addconn__field addconn__field--url">https://你的固定地址/mcp/••••••</span>
+        <span class="addconn__btn">连接</span>
+        <figcaption class="sr-only">在 AI 的设置里添加连接：名称 Windrise Bridge，网址是 Windrise Bridge 给你的地址。</figcaption>
+      </figure>
+    </li>
+  </ol>
+</section>
+
+<!-- 搭配 BrowserOS：合起来能做到什么 -->
+<section class="pair" id="browseros" aria-labelledby="pair-title">
+  <div class="pair__head">
+    <div>
+      <h2 class="section-title" id="pair-title" data-reveal>登录好的网站，<br>在哪都能用</h2>
+      <p class="pill" data-reveal>测试版已跑通 · 正式版还没换上</p>
+    </div>
+    <p class="pair__lede" data-reveal>BrowserOS 是一款开源浏览器，用起来和 Chrome 一样，管「登录好的网站」；Windrise Bridge 管「让外面的 AI 够得着」。</p>
+  </div>
+  <div class="together">
+    <figure class="browser" data-ui data-reveal>
+      <div class="browser__bar"><span class="browser__dots"><i></i><i></i><i></i></span><span class="browser__tab">后台 · example.com</span><span class="browser__tab browser__tab--off">账号 A</span><span class="browser__name">BrowserOS · 账号「店铺后台」</span></div>
+      <div class="browser__page">
+        <span class="badge">AI 正在操作 · 你可以随时看着</span>
+        <b>订单列表</b>
+        <div class="browser__filters"><span class="browser__field">日期：今天<i></i></span><span class="browser__field browser__field--plain">状态：全部</span><span class="browser__btn">导出</span></div>
+        <ol class="browser__rows">
+          <li><span>#1042</span><span>待发货</span><span>¥128.00</span></li>
+          <li><span>#1041</span><span>已付款</span><span>¥59.00</span></li>
+          <li><span>#1040</span><span>待发货</span><span>¥312.50</span></li>
+        </ol>
+      </div>
+      <figcaption class="sr-only">BrowserOS 账号窗口：AI 在已经登录好的店铺后台里筛选今天的订单。</figcaption>
+    </figure>
+    <ul class="outcomes">
+      <li data-reveal><b>你的账号，在哪都能用</b>登录只在你的电脑上做一次，手机上的 AI 直接用这些已经登录好的窗口。</li>
+      <li data-reveal><b>多个账号同时干活，不抢你的屏幕</b>每个账号一个独立的浏览器，窗口在后台打开，不弹到你面前。</li>
+      <li data-reveal><b>只有一个上锁的入口</b>BrowserOS 自带的 AI 和 MCP 服务关掉，换成 Windrise 的私有管道，不开调试端口。</li>
+      <li data-reveal><b>关掉就干净</b>Windrise Bridge 一退出，这些浏览器 5 秒内跟着关，不留开着的已登录窗口。</li>
+    </ul>
+  </div>
+  <div class="legend">
+    <div data-reveal>
+      <h3>BrowserOS 管</h3>
+      <ul class="dots">
+        <li>用起来和 Chrome 一样，能装插件</li>
+        <li>网站把它当普通浏览器</li>
+        <li>每个账号一个独立的资料目录</li>
+      </ul>
+    </div>
+    <div data-reveal>
+      <h3>Windrise Bridge 管</h3>
+      <ul class="dots">
+        <li>一个网址，手机和网页上的 AI 都能连</li>
+        <li>浏览器、文件、终端一起交给你信得过的 AI</li>
+        <li>掉线自己发现、自己重连</li>
+      </ul>
+    </div>
+  </div>
+  <p class="pair__note" data-reveal>浏览器部分由 BrowserOS 提供（AGPL-3.0），要另外安装，Windrise Bridge 会自动找到它。BrowserOS 本身支持分屏，Windrise 还没接上。</p>
+</section>
+
+<!-- 你说了算：每句话前面是软件里真的开关 -->
+<section class="rules" aria-labelledby="rules-title">
+  <div class="rules__head">
+    <h2 class="section-title" id="rules-title" data-reveal>你说了算的几件事</h2>
+    <p class="rules__lede" data-reveal>给 AI 的权限有两种：主网址全权，能用浏览器、文件和终端；也可以给某个 AI 单独发一把钥匙，只让它碰分给它的窗口。</p>
+  </div>
+  <ul class="switches">
+    <li class="switchrow is-on" data-reveal>
+      <button type="button" class="toggle" role="switch" aria-checked="true" aria-label="给某个 AI 单独发钥匙" data-ui><span></span></button>
+      <div><p class="switchrow__text">给某个 AI 单独发钥匙</p><p class="switchrow__more">拿这把钥匙的 AI 只能操作分给它的账号窗口，不能跑命令、读写文件；想多碰一个窗口，先排队等你批。</p></div>
+    </li>
+    <li class="switchrow is-on is-locked" data-reveal>
+      <button type="button" class="toggle" role="switch" aria-checked="true" aria-disabled="true" aria-label="登录页只许人操作（始终开启）" data-ui><span></span></button>
+      <div><p class="switchrow__text">登录页只许人操作</p><p class="switchrow__more">Google、Claude、ChatGPT、DeepSeek 的登录页，AI 用浏览器工具读不到、点不了，这个开关关不掉。它只管浏览器工具：拿主网址的 AI 还能跑命令。</p></div>
+    </li>
+    <li class="switchrow is-on" data-reveal>
+      <button type="button" class="toggle" role="switch" aria-checked="true" aria-label="浏览器操作不走你的光标" data-ui><span></span></button>
+      <div><p class="switchrow__text">浏览器操作不走你的光标</p><p class="switchrow__more">AI 在浏览器里用虚拟输入，不移动你的鼠标、不抢键盘，你照常用电脑。</p></div>
+    </li>
+    <li class="switchrow" data-reveal>
+      <button type="button" class="toggle" role="switch" aria-checked="false" aria-label="危险命令先问你" data-ui><span></span></button>
+      <div><p class="switchrow__text">危险命令先问你</p><p class="switchrow__more">打开后，删除文件、强制覆盖代码、结束进程这类命令会先停下来，等你在电脑上批准。默认是关的。</p></div>
+    </li>
+  </ul>
+</section>
+
+<!-- 断线自动恢复 -->
+<section class="steady" id="steady" aria-labelledby="steady-title">
+  <div class="steady__text">
+    <h2 class="section-title" id="steady-title" data-reveal>人在外面，<br>桥不能断</h2>
+    <p class="steady__lede" data-reveal>你在外面派了活，家里网络抖了一下，桥会自己接回来。下面这几条在测试版里实测通过，正式版还没换上。</p>
+    <dl class="figures">
+      <div data-reveal><dt>约一分钟</dt><dd>断了自己接回来，不用人管（实测 51–61 秒）</dd></div>
+      <div data-reveal><dt>每 30 秒</dt><dd>从外面确认一次，连着的是你这台电脑</dd></div>
+      <div data-reveal><dt>15 秒心跳</dt><dd>跑很久的活不会半路被掐断（实测跑满 130 秒）</dd></div>
+    </dl>
+    <p class="steady__note" data-reveal>要一直连着，请用固定地址：快速隧道每次重连都会换新网址，手机上的 AI 得重新填；自己的 Cloudflare 命名隧道或 ngrok 固定域名就不会变。</p>
+  </div>
+  <figure class="timeline" data-ui data-reveal>
+    <p class="timeline__title">一次真机测试</p>
+    <ol>
+      <li><b>20:00:19</b><span>隧道卡住了：进程还在，数据不走</span></li>
+      <li><b>20:00:28</b><span>从外面连不上，记一次</span></li>
+      <li><b>20:00:58</b><span>连续两次连不上，自动重连</span></li>
+      <li><b>20:01:07</b><span>隧道接通，再确认一遍</span></li>
+      <li class="is-done"><b>20:01:10</b><span>从外面又能连上了</span></li>
+    </ol>
+    <figcaption class="sr-only">隧道卡住后 51 秒内自己恢复。</figcaption>
+  </figure>
+</section>
+
+<!-- 能接的 AI -->
+<section class="agents" aria-labelledby="agents-title">
+  <h2 class="section-title" id="agents-title" data-reveal>你在用的 AI，<br>都能接上</h2>
+  <div class="agents__cols">
+    <div data-reveal>
+      <h3>手机和网页上的</h3>
+      <ul class="rows">
+        <li><span>ChatGPT</span><em>粘贴网址</em></li>
+        <li><span>Claude</span><em>粘贴网址</em></li>
+        <li><span>Muse</span><em>粘贴网址</em></li>
+        <li><span>Manus</span><em>粘贴网址</em></li>
+      </ul>
+    </div>
+    <div data-reveal>
+      <h3>你电脑上的</h3>
+      <ul class="rows">
+        <li><span>Claude Code</span><em>一条命令接上</em></li>
+        <li><span>Codex</span><em>一键写配置</em></li>
+        <li><span>Cursor</span><em>一键写配置</em></li>
+        <li><span>OpenCode</span><em>一键写配置</em></li>
+        <li><span>Gemini CLI</span><em>一键写配置</em></li>
+      </ul>
+    </div>
+  </div>
+  <p class="agents__note" data-reveal>能加 MCP 连接的 AI 都能接。手机 App 里找不到添加连接的地方，就先在网页版里加好，手机上就能用。</p>
+</section>
+
+<!-- 安全与许可证：浅色面板 -->
+<section class="trust" id="trust" aria-labelledby="trust-title">
+  <div class="trust__head">
+    <h2 class="section-title" id="trust-title" data-reveal>账号留在<br>你的电脑上</h2>
+  </div>
+  <div class="trust__blocks">
+    <div class="trust__block" data-reveal>
+      <h3>留在本机的</h3>
+      <p>每个账号的登录态只存在它自己的资料目录里，不复制、不外传，默认不导出 Cookie。交给 AI 的页面快照，会把密码、卡号、验证码换成「[已隐藏]」。</p>
+    </div>
+    <div class="trust__block" data-reveal>
+      <h3>会发出去的</h3>
+      <p>你让 AI 看的页面内容和截图，会发给你选的那个 AI。公网隧道由 Cloudflare 或 ngrok 提供，技术上它们能看到经过的内容。BrowserOS 默认开着使用统计和错误上报。</p>
+    </div>
+    <div class="trust__block" data-reveal>
+      <h3>许可证</h3>
+      <p>Windrise Bridge 采用 AGPL-3.0-or-later 许可证，源码清理好后公开（见路线图）。浏览器部分由 BrowserOS 提供，同样是 AGPL-3.0。</p>
+    </div>
+  </div>
+</section>
+
+<!-- 路线图 -->
+<section class="roadmap" id="roadmap" aria-labelledby="roadmap-title">
+  <div class="roadmap__head">
+    <h2 class="section-title" id="roadmap-title" data-reveal>先做能用的，<br>再做好用的</h2>
+    <p class="roadmap__lede" data-reveal>按验收标准推进，不写日期。</p>
+  </div>
+  <div class="stages">
+    <div class="stage" data-reveal>
+      <h3>测试版已跑通</h3>
+      <ul>
+        <li>每个账号一个独立的 BrowserOS 窗口</li>
+        <li>给某个 AI 单独发一把钥匙</li>
+        <li>浏览器操作不走你的光标</li>
+        <li>登录页只许人操作</li>
+        <li>断线自动恢复、长任务不被掐断</li>
+      </ul>
+    </div>
+    <div class="stage" data-reveal>
+      <h3>还在做</h3>
+      <ul>
+        <li>人一碰窗口，AI 就让出来</li>
+        <li>BrowserOS 分屏：一半你看，一半 AI 做</li>
+        <li>Muse 当总秘书走通</li>
+        <li>新版安装包</li>
+      </ul>
+    </div>
+    <div class="stage" data-reveal>
+      <h3>计划</h3>
+      <ul>
+        <li>需要你时远程接手：登录、付款、验证码通知到手机</li>
+        <li>一次性脚本：打开、填、点、取结果合成一次</li>
+        <li>总调度：一个主 AI 把活派给你电脑上的编程助手</li>
+        <li>站点包：常用网站各一份「怎么操作」</li>
+        <li>令牌加密、下载校验、源码公开</li>
+        <li>托管版（固定入口、自动更新）：暂缓</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- 常见问题 -->
+<section class="faq" id="faq" aria-labelledby="faq-title">
+  <h2 class="section-title faq__title" id="faq-title" data-reveal>常见问题</h2>
+  <div class="faq__list">
+    <details name="faq" class="q" data-reveal><summary>手机上怎么用？<i aria-hidden="true"></i></summary><div class="q__a"><p>在手机上的 AI 里，把 Windrise Bridge 给你的网址加成一个连接（ChatGPT、Claude 里叫「连接器」）。能加 MCP 连接的 App 都可以；有的 App 要先在网页版里加好，手机上就能用。</p></div></details>
+    <details name="faq" class="q" data-reveal><summary>必须有自己的域名、会配隧道吗？<i aria-hidden="true"></i></summary><div class="q__a"><p>试用不用。点「一键连接」走 Cloudflare 快速隧道，零配置，但网址是临时的：每次重连（包括自动重连、睡眠醒来、换网络）都会换新网址，ChatGPT、Claude 里要重新填。人不在电脑前也想一直连着，请用自己的 Cloudflare 命名隧道或 ngrok 固定域名。</p></div></details>
+    <details name="faq" class="q" data-reveal><summary>为什么要另外装 BrowserOS？<i aria-hidden="true"></i></summary><div class="q__a"><p>账号窗口要一个完整的浏览器：能装插件，网站把它当普通浏览器。BrowserOS 是开源的 Chromium 浏览器，我们原样使用、不改它；它自带的 AI 和 MCP 服务会被关掉，改走 Windrise 的私有管道。装好以后，Windrise Bridge 会自动找到它。</p></div></details>
+    <details name="faq" class="q" data-reveal><summary>我的登录态会被拿走吗？<i aria-hidden="true"></i></summary><div class="q__a"><p>默认不会。登录态留在各自的资料目录里，AI 在窗口里干活，不导出 Cookie。但你让它看的页面内容和截图，会发给你接入的那个 AI。</p></div></details>
+    <details name="faq" class="q" data-reveal><summary>AI 会不会抢我的鼠标键盘？<i aria-hidden="true"></i></summary><div class="q__a"><p>浏览器里不会。AI 用浏览器自己的虚拟输入，不移动系统光标、不抢键盘；它的窗口在后台打开，不弹到你面前。</p></div></details>
+    <details name="faq" class="q" data-reveal><summary>电脑关了还能用吗？<i aria-hidden="true"></i></summary><div class="q__a"><p>不能。桥的另一头是你的电脑，它得开着、连着网。睡眠醒来或者换了网络，桥会自己重连；用快速隧道时网址会变，所以长期用请配固定地址。</p></div></details>
+    <details name="faq" class="q" data-reveal><summary>收费吗？<i aria-hidden="true"></i></summary><div class="q__a"><p>免费，用你自己的隧道。省事的托管版（固定公网入口、自动更新、云端记忆）暂时搁置，价格还没定。</p></div></details>
+    <details name="faq" class="q" data-reveal><summary>有 Mac 版吗？<i aria-hidden="true"></i></summary><div class="q__a"><p>现在只有 Windows 版，支持 Windows 10 和 11。</p></div></details>
+  </div>
+</section>
+
+<!-- 下载 -->
+<section class="cta" id="download" aria-labelledby="cta-title">
+  <div class="cta__art" data-reveal><img src="assets/icon-512.png" width="512" height="512" alt="Windrise Bridge 图标：云做成的风筝在天上飞，一根线连着你的电脑" loading="lazy"></div>
+  <div class="cta__text">
+    <h2 class="section-title" id="cta-title" data-reveal>装上它，<br>在哪都能派活</h2>
+    <p data-reveal>新版正在测试，发布后从这里直接下载。免费，Windows 10 / 11。</p>
+    <a class="button" id="dl-win" href="#download" aria-disabled="true" data-reveal>新版即将发布</a>
+  </div>
+</section>
+
+</main>
+
+<footer class="foot">
+  <p class="foot__name"><img src="assets/icon-small.svg" width="72" height="72" alt="" loading="lazy">Windrise Bridge</p>
+  <div class="foot__cols">
+    <ul>
+      <li><a href="#connect">怎么接上</a></li>
+      <li><a href="#browseros">搭配 BrowserOS</a></li>
+      <li><a href="#steady">断线自动恢复</a></li>
+      <li><a href="#trust">安全</a></li>
+      <li><a href="#roadmap">路线图</a></li>
+      <li><a href="#faq">常见问题</a></li>
+    </ul>
+    <ul>
+      <li>许可证：AGPL-3.0-or-later</li>
+      <li>浏览器部分：BrowserOS（AGPL-3.0）</li>
+      <li>Windows 10 / 11</li>
+      <li>bridge.windrise.si</li>
+    </ul>
+  </div>
+  <div class="foot__legal">
+    <p>© 2026 Windrise Bridge。ChatGPT、Claude 等名称属于各自的所有者，这里只用来说明能接入哪些服务。页面上的软件界面是示意，内容是示例。</p>
+    <a href="#top">回到顶部</a>
+  </div>
+</footer>
+
+<script src="main.js?v=20261025b" defer></script>
+</body>
+</html>

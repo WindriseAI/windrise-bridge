@@ -1,0 +1,26 @@
+--- a/src/vendor/browseros/core/observer/resolve.js	2026-10-26 23:04:58.239985100 +0800
++++ b/src/vendor/browseros/core/observer/resolve.js	2026-10-26 23:04:34.090488700 +0800
+@@ -2,8 +2,11 @@
+ // 来源：BrowserOS（https://github.com/browseros-ai/BrowserOS）提交 512f9cc15962
+ //       packages/browseros-agent/packages/browser-core/src/core/observer/resolve.ts
+ // 由 tools/vendor-browseros.mjs 从 TypeScript 转成 JavaScript，逻辑未改。不要直接改这个文件，重跑脚本会覆盖。
++// 例外：本文件已由 tools/vendor-patches/browseros/resolve.js.patch 改写（光标扫描救回的元素不走第二层按角色+名字重查）。
+ import { ROOT_ROLES } from '../snapshot/roles.js';
+ import { fetchAxTree } from './ax-tree.js';
++/** 光标扫描给出的角色：无障碍树里没有同名节点，第二层重查只会撞到别的元素，直接判过期。 */
++const PROMOTED_ROLES = new Set(['clickable', 'image', 'icon', 'file-input']);
+ /**
+  * Resolves a ref to a live element via two tiers: trust the cached backendNodeId, and on
+  * staleness re-query the same accessibility tree by (role, name, nth). Using the same data
+@@ -14,6 +17,11 @@
+     if (await isLive(session, entry.backendNodeId)) {
+         return { session, backendNodeId: entry.backendNodeId };
+     }
++    // 被忽略的 AX 节点（角色由光标扫描顶上的 clickable / image / icon / file-input）在树里查不到，
++    // 按 role+name+nth 重查会撞上一个长得像的别的元素；宁可报过期，让调用方重新拍快照。
++    if (PROMOTED_ROLES.has(entry.role)) {
++        throw new Error(`Stale ref ${entry.ref} (${entry.role} "${entry.name}"); take a new snapshot.`);
++    }
+     const fresh = findByRoleNameNth(await fetchAxTree(session, axParams), entry);
+     if (fresh === undefined) {
+         throw new Error(`Stale ref ${entry.ref} (${entry.role} "${entry.name}"); take a new snapshot.`);

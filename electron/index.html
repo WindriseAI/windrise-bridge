@@ -1,0 +1,751 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self'; img-src 'self' data:" />
+<title>Windrise Bridge</title>
+<link rel="stylesheet" href="ui/app.css" />
+</head>
+<body>
+<div class="app">
+  <nav class="rail" aria-label="主导航">
+    <div class="brand">
+      <img class="brand-logo" src="assets/icon-256.png" alt="" width="30" height="30" />
+      <div class="brand-text"><div class="brand-name">Windrise Bridge</div><div class="brand-sub">本地 MCP 桥</div></div>
+      <div class="rail-foot">
+      <button class="icon-btn" id="btn-theme" title="切换主题（跟随系统 / 浅色 / 深色）" aria-label="切换主题">
+        <span class="icon-swap"><svg class="i t-sun-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2v2" /> <path d="M14.837 16.385a6 6 0 1 1-7.223-7.222c.624-.147.97.66.715 1.248a4 4 0 0 0 5.26 5.259c.589-.255 1.396.09 1.248.715" /> <path d="M16 12a4 4 0 0 0-4-4" /> <path d="m19 5-1.256 1.256" /> <path d="M20 12h2" /></svg><svg class="i t-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4" /> <path d="M12 2v2" /> <path d="M12 20v2" /> <path d="m4.93 4.93 1.41 1.41" /> <path d="m17.66 17.66 1.41 1.41" /> <path d="M2 12h2" /> <path d="M20 12h2" /> <path d="m6.34 17.66-1.41 1.41" /> <path d="m19.07 4.93-1.41 1.41" /></svg><svg class="i t-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401" /></svg></span>
+      </button>
+      <button class="icon-btn" id="btn-collapse" title="收起 / 展开侧栏" aria-label="收起侧栏">
+        <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><rect width="18" height="18" x="3" y="3" rx="2" /> <path d="M9 3v18" /></svg>
+      </button>
+    </div>
+    </div>
+    <div class="rail-grid">
+      <button class="rail-btn active" data-tab="bridge" title="Bridge">
+        <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M15.914 4a1.5 1.5 0 00-2.474-1.561l-9 9A1.5 1.5 0 005.5 14h4.002a.5.5 0 01.471.666L8.086 20a1.5 1.5 0 002.475 1.56l9-9A1.5 1.5 0 0018.5 10h-3.997a.5.5 0 01-.472-.667z" /></svg>
+        <span class="rail-label">Bridge</span><kbd class="rail-kbd">Ctrl 1</kbd>
+      </button>
+      <button class="rail-btn" data-tab="browser" title="多开浏览器">
+        <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2" /> <path d="M10 4v4" /> <path d="M2 8h20" /> <path d="M6 4v4" /></svg>
+        <span class="rail-label">多开浏览器</span><kbd class="rail-kbd">Ctrl 2</kbd>
+      </button>
+      <button class="rail-btn" data-tab="tools" title="工具">
+        <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.106-3.105c.32-.322.863-.22.983.218a6 6 0 0 1-8.259 7.057l-7.91 7.91a1 1 0 0 1-2.999-3l7.91-7.91a6 6 0 0 1 7.057-8.259c.438.12.54.662.219.984z" /></svg>
+        <span class="rail-label">工具</span><kbd class="rail-kbd">Ctrl 3</kbd>
+      </button>
+      <button class="rail-btn" data-tab="context" title="共享上下文">
+        <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><circle cx="18" cy="5" r="3" /> <circle cx="6" cy="12" r="3" /> <circle cx="18" cy="19" r="3" /> <line x1="8.59" x2="15.42" y1="13.51" y2="17.49" /> <line x1="15.41" x2="8.59" y1="6.51" y2="10.49" /></svg>
+        <span class="rail-label">共享上下文</span><kbd class="rail-kbd">Ctrl 4</kbd>
+      </button>
+      <button class="rail-btn" data-tab="account" title="激活">
+        <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="m15.5 7.5 2.3 2.3a1 1 0 0 0 1.4 0l2.1-2.1a1 1 0 0 0 0-1.4L19 4" /> <path d="m21 2-9.6 9.6" /> <circle cx="7.5" cy="15.5" r="5.5" /></svg>
+        <span class="rail-label">激活</span><kbd class="rail-kbd">Ctrl 5</kbd>
+      </button>
+      <button class="rail-btn" data-tab="settings" title="设置">
+        <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M14 17H5" /> <path d="M19 7h-9" /> <circle cx="17" cy="17" r="3" /> <circle cx="7" cy="7" r="3" /></svg>
+        <span class="rail-label">设置</span><kbd class="rail-kbd">Ctrl 6</kbd>
+      </button>
+    </div>
+    <!-- 侧栏下半部分：使用教程（从易到难，点开展开，可放大） -->
+    <div class="rail-guides" id="rail-guides">
+      <div class="rg-head">
+        <span class="rg-title"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 7v14" /> <path d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z" /></svg>使用教程</span>
+        <button class="icon-btn rg-btn" id="btn-guides-expand" title="放大看教程" aria-label="放大看教程"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 3h6v6" /> <path d="m21 3-7 7" /> <path d="m3 21 7-7" /> <path d="M9 21H3v-6" /></svg></button>
+      </div>
+      <div class="rg-list" id="rg-list"></div>
+    </div>
+    <!-- 侧栏最下边：推广位 -->
+    <a class="rail-ad" id="rail-ad" href="#" data-ext="https://prodclub.xyz/r/TEGFPT" title="ChatGPT Plus，点击去购买">
+      <span class="ad-logo" aria-hidden="true"><svg viewBox="0 0 24 24"><path fill="currentColor" d="M22.2819 9.8211a5.9847 5.9847 0 0 0-.5157-4.9108 6.0462 6.0462 0 0 0-6.5098-2.9A6.0651 6.0651 0 0 0 4.9807 4.1818a5.9847 5.9847 0 0 0-3.9977 2.9 6.0462 6.0462 0 0 0 .7427 7.0966 5.98 5.98 0 0 0 .511 4.9107 6.051 6.051 0 0 0 6.5146 2.9001A5.9847 5.9847 0 0 0 13.2599 24a6.0557 6.0557 0 0 0 5.7718-4.2058 5.9894 5.9894 0 0 0 3.9977-2.9001 6.0557 6.0557 0 0 0-.7475-7.0729zm-9.022 12.6081a4.4755 4.4755 0 0 1-2.8764-1.0408l.1419-.0804 4.7783-2.7582a.7948.7948 0 0 0 .3927-.6813v-6.7369l2.02 1.1686a.071.071 0 0 1 .038.052v5.5826a4.504 4.504 0 0 1-4.4945 4.4944zm-9.6607-4.1254a4.4708 4.4708 0 0 1-.5346-3.0137l.142.0852 4.783 2.7582a.7712.7712 0 0 0 .7806 0l5.8428-3.3685v2.3324a.0804.0804 0 0 1-.0332.0615L9.74 19.9502a4.4992 4.4992 0 0 1-6.1408-1.6464zM2.3408 7.8956a4.485 4.485 0 0 1 2.3655-1.9728V11.6a.7664.7664 0 0 0 .3879.6765l5.8144 3.3543-2.0201 1.1685a.0757.0757 0 0 1-.071 0l-4.8303-2.7865A4.504 4.504 0 0 1 2.3408 7.872zm16.5963 3.8558L13.1038 8.364 15.1192 7.2a.0757.0757 0 0 1 .071 0l4.8303 2.7913a4.4944 4.4944 0 0 1-.6765 8.1042v-5.6772a.79.79 0 0 0-.407-.667zm2.0107-3.0231l-.142-.0852-4.7735-2.7818a.7759.7759 0 0 0-.7854 0L9.409 9.2297V6.8974a.0662.0662 0 0 1 .0284-.0615l4.8303-2.7866a4.4992 4.4992 0 0 1 6.6802 4.66zM8.3065 12.863l-2.02-1.1638a.0804.0804 0 0 1-.038-.0567V6.0742a4.4992 4.4992 0 0 1 7.3757-3.4537l-.142.0805L8.704 5.459a.7948.7948 0 0 0-.3927.6813zm1.0976-2.3654l2.602-1.4998 2.6069 1.4998v2.9994l-2.5974 1.4997-2.6067-1.4997Z"/></svg></span>
+      <span class="ad-text"><b>ChatGPT Plus</b><small>¥129 · 点击购买</small></span>
+      <span class="ad-tag">推广</span>
+      <span class="ad-go"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14" /> <path d="m12 5 7 7-7 7" /></svg></span>
+    </a>
+    <a class="rail-ad ad-muse" id="rail-ad-muse" href="#" data-ext="https://www.16688.com.cn/goods/G75394034" title="Muse 300亿，点击去购买">
+      <span class="ad-logo" aria-hidden="true"><img src="assets/ad-muse.png" alt="" draggable="false" /></span>
+      <span class="ad-text"><b>Muse 300亿</b><small>¥88 · 点击购买</small></span>
+      <span class="ad-tag">推广</span>
+      <span class="ad-go"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14" /> <path d="m12 5 7 7-7 7" /></svg></span>
+    </a>
+    <!-- 侧栏底部常驻状态（参考 Clash Verge 侧栏底部的实时流量区） -->
+    <div class="side-status" id="side-status">
+      <div class="ss-row" title="Bridge 状态"><span class="rail-dot" id="rail-status"></span><span class="ss-label">Bridge</span><span class="ss-val" id="ss-bridge">已停止</span></div>
+      <div class="ss-row" title="隧道状态"><span class="rail-dot" id="ss-tunnel-dot"></span><span class="ss-label">隧道</span><span class="ss-val" id="ss-tunnel">未启动</span></div>
+      <div class="ss-row" title="工具调用次数"><span class="ss-icon"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M22 12h-2.48a2 2 0 0 0-1.93 1.46l-2.35 8.36a.25.25 0 0 1-.48 0L9.24 2.18a.25.25 0 0 0-.48 0l-2.35 8.36A2 2 0 0 1 4.49 12H2" /></svg></span><span class="ss-label">调用</span><span class="ss-val" id="ss-calls">0</span></div>
+    </div>
+  </nav>
+
+  <main class="main">
+    <header class="topbar">
+      <div class="topbar-titles"><h1 class="topbar-title" id="page-title">Bridge</h1></div>
+      <div class="topbar-actions">
+        <button class="status-pill" id="chip-state" data-level="stopped" title="连接状态（点击回到 Bridge 页）"><i></i><span>未启动</span></button>
+      </div>
+    </header>
+
+    <div class="scroll">
+      <!-- ========== Bridge 页 ========== -->
+      <section class="page active" id="page-bridge">
+        <div class="act-banner" id="act-banner" hidden>
+          <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12a9 9 0 1 1-3-6.7" /><path d="M21 3v6h-6" /></svg>
+          <span id="act-banner-text">还没有激活：打通隧道、让远程 AI 用这台电脑之前，需要先输入激活码。</span>
+          <button class="btn btn-sm btn-primary" id="btn-act-banner">去激活</button>
+        </div>
+        <div class="act-banner upd-banner" id="update-banner" hidden>
+          <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12a9 9 0 1 1-3-6.7" /><path d="M21 3v6h-6" /></svg>
+          <span id="update-text"></span>
+          <button class="btn btn-sm btn-primary" id="btn-update-main">立即更新</button>
+          <button class="btn btn-sm" id="btn-update-later">稍后</button>
+          <button class="btn btn-sm" id="btn-update-skip">跳过此版本</button>
+        </div>
+        <div class="card hero" id="hero" data-level="stopped">
+          <div class="hero-top">
+            <div class="hero-orb" aria-hidden="true">
+              <span class="orb-glyph g-stopped"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2v10" /><path d="M18.4 6.6a9 9 0 1 1-12.77.04" /></svg></span>
+              <span class="orb-glyph g-local"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M15.914 4a1.5 1.5 0 00-2.474-1.561l-9 9A1.5 1.5 0 005.5 14h4.002a.5.5 0 01.471.666L8.086 20a1.5 1.5 0 002.475 1.56l9-9A1.5 1.5 0 0018.5 10h-3.997a.5.5 0 01-.472-.667z" /></svg></span>
+              <span class="orb-glyph g-connecting"><i class="orb-spin"></i></span>
+              <span class="orb-glyph g-connected"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5" /></svg></span>
+              <span class="orb-glyph g-error"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" /><path d="M12 8v4" /><path d="M12 16h.01" /></svg></span>
+            </div>
+            <div class="hero-text">
+              <h2 class="hero-title" id="hero-title">未启动</h2>
+              <div class="hero-sub"><span class="dot" id="health-dot"></span><span id="health-text">一键连接后，外部 AI 就能用这台电脑</span><button class="link-btn" id="btn-error-guide" hidden>怎么解决？</button></div>
+            </div>
+            <div class="hero-actions">
+              <label class="auto-switch" title="打开软件时自动启动 Bridge 并按你选的连接方式打通隧道">
+                <input type="checkbox" class="switch" id="auto-connect" />
+                <span>打开软件自动连接</span>
+              </label>
+              <button class="btn btn-primary btn-lg" id="btn-toggle">一键连接</button>
+            </div>
+          </div>
+          <div class="net-card" id="card-net" data-level="idle">
+            <div class="net-text">
+              <strong>网络 / 代理</strong>
+              <span>开着代理（Clash、V2Ray 等）一般也能用；一直显示连接中或连不上，多半是代理挡住了隧道。</span>
+              <span class="net-status" id="net-status" hidden></span>
+              <div class="net-extra" id="net-extra" hidden></div>
+            </div>
+            <div class="net-actions">
+              <button class="btn btn-sm" id="btn-net-check">检测网络</button>
+              <button class="btn btn-sm" id="btn-net-guide">代理设置教程</button>
+            </div>
+          </div>
+          <ol class="steps" id="quickstart">
+            <li class="qs-step" data-step="1"><span class="qs-num">1</span><span class="qs-title">启动 Bridge</span><span class="qs-sub" id="qs-1"></span></li>
+            <li class="qs-step" data-step="2"><span class="qs-num">2</span><span class="qs-title">打通隧道</span><span class="qs-sub" id="qs-2"></span></li>
+          </ol>
+        </div>
+
+        <div class="card success" id="card-connected" hidden>
+          <div class="success-head">
+            <span class="success-badge"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5" /></svg></span>
+            <div class="success-text"><h2>已打通，可以连接 AI 了</h2><div class="sub" id="connected-sub">公网 MCP 地址</div></div>
+          </div>
+          <div class="url-field">
+            <input class="input mono" id="public-mcp" readonly value="" aria-label="公网 MCP 地址" />
+            <button class="btn" id="btn-copy-public-mcp"><span class="icon-swap"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><rect width="14" height="14" x="8" y="8" rx="2" ry="2" /> <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" /></svg><svg class="i i-check" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5" /></svg></span>复制</button>
+          </div>
+          <p class="path-note" id="connected-path-note" hidden>路径口令（兼容只能填网址的客户端）</p>
+          <div class="client-cfg-open"><button class="btn btn-sm" id="btn-client-config">按客户端复制配置…</button></div>
+          <div class="conn-auth">
+            <div class="conn-auth-text">
+              <span>连接时在请求头加 <code>Authorization: Bearer 你的口令</code></span>
+              <span class="conn-key-count" id="connected-key-count">还没有口令</span>
+            </div>
+            <button class="btn btn-sm" id="btn-manage-keys">新增口令</button>
+          </div>
+          <div class="mcp-tip" role="note">
+            <span class="mcp-tip-ico" aria-hidden="true">!</span>
+            <div class="mcp-tip-text"><b>提问时，开头先写「使用 MCP，」</b><span>例：使用 MCP，帮我看看 D:\work 里有哪些文件。不加这句，AI 可能不会去用你的电脑</span></div>
+            <button class="btn btn-sm" id="btn-copy-mcp-prefix"><span class="icon-swap"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><rect width="14" height="14" x="8" y="8" rx="2" ry="2" /> <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" /></svg><svg class="i i-check" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5" /></svg></span>复制开头</button>
+          </div>
+          <div class="ws-row">
+            <span class="ws-label">AI 可访问的文件夹</span>
+            <span class="ws-list" id="ws-list">—</span>
+            <button class="btn btn-sm" id="btn-ws-edit">添加 / 修改</button>
+          </div>
+        </div>
+
+        <div class="card" id="card-approvals" hidden>
+          <div class="card-head"><h2>待批准的命令</h2><span class="chip chip-warn" id="chip-approvals">0</span></div>
+          <div id="approval-list" class="approval-list"></div>
+        </div>
+
+        <div class="card" id="card-tunnel">
+          <div class="card-head"><h2>隧道</h2><span class="chip" id="chip-tunnel">未启动</span><span class="ws-spacer"></span><button class="btn btn-sm btn-plain" id="btn-tunnel-guide" title="一步步教你配置当前选的连接方式">使用教程</button></div>
+          <div class="tunnel-list" id="tunnel-list" role="radiogroup" aria-label="隧道类型">
+            <label class="tunnel" data-provider="cloudflare">
+              <input type="radio" name="tunnel" value="cloudflare" />
+              <div class="tunnel-icon"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z" /></svg></div>
+              <div class="tunnel-body">
+                <div class="tunnel-name">快速隧道 <span class="lock" data-lock="cloudflare" hidden><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><rect width="18" height="11" x="3" y="11" rx="2" ry="2" /> <path d="M7 11V7a5 5 0 0 1 10 0v4" /></svg>未开通</span></div>
+                <div class="tunnel-desc">Cloudflare 临时地址，重启会变</div>
+              </div>
+              <span class="tag">免费 · 免配置</span>
+            </label>
+            <label class="tunnel" data-provider="cloudflare-named">
+              <input type="radio" name="tunnel" value="cloudflare-named" />
+              <div class="tunnel-icon"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" /> <path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20" /> <path d="M2 12h20" /></svg></div>
+              <div class="tunnel-body">
+                <div class="tunnel-name">命名隧道 <span class="lock" data-lock="cloudflare-named" hidden><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><rect width="18" height="11" x="3" y="11" rx="2" ry="2" /> <path d="M7 11V7a5 5 0 0 1 10 0v4" /></svg>未开通</span></div>
+                <div class="tunnel-desc">自己的域名，地址不变、流量不限</div>
+              </div>
+              <span class="tag">固定地址</span>
+            </label>
+            <label class="tunnel" data-provider="ngrok">
+              <input type="radio" name="tunnel" value="ngrok" />
+              <div class="tunnel-icon"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" /> <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" /></svg></div>
+              <div class="tunnel-body">
+                <div class="tunnel-name">ngrok <span class="lock" data-lock="ngrok" hidden><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><rect width="18" height="11" x="3" y="11" rx="2" ry="2" /> <path d="M7 11V7a5 5 0 0 1 10 0v4" /></svg>未开通</span></div>
+                <div class="tunnel-desc">免费固定子域名，每月 1GB</div>
+              </div>
+              <span class="tag">无需域名</span>
+            </label>
+          </div>
+          <div id="tunnel-readiness" class="readiness" hidden></div>
+          <div class="row" id="tunnel-extra" style="display:none">
+            <input class="input" id="named-hostname" placeholder="你的域名，例如 bridge.example.com" />
+          </div>
+          <div class="btn-row">
+            <button class="btn" id="btn-tunnel-start">只打通隧道</button>
+            <button class="btn" id="btn-tunnel-stop">断开隧道</button>
+            <button class="btn btn-ghost" id="btn-tunnel-probe"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8" /> <path d="M21 3v5h-5" /> <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16" /> <path d="M8 16H3v5" /></svg>重新检测</button>
+          </div>
+        </div>
+
+        <div class="card" id="card-mcp">
+          <div class="card-head"><h2>MCP 地址</h2><span class="hint-inline">AI 连接用 · 敏感信息勿公开</span></div>
+          <div class="list-group">
+            <div class="lg-row"><span class="lg-label">地址</span><input class="input mono" id="public-url" readonly value="（未打通）" /><button class="btn btn-sm" id="btn-copy-public"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><rect width="14" height="14" x="8" y="8" rx="2" ry="2" /> <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" /></svg>复制</button></div>
+            <div class="lg-row" hidden><span class="lg-label">本机</span><input class="input mono" id="mcp-url" readonly value="（未启动）" /><button class="btn btn-sm" id="btn-copy-mcp"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><rect width="14" height="14" x="8" y="8" rx="2" ry="2" /> <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" /></svg>复制</button></div>
+            <div class="lg-row" hidden><span class="lg-label">健康检查</span><input class="input mono" id="health-url" readonly value="（未启动）" /><button class="btn btn-sm" id="btn-copy-health"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><rect width="14" height="14" x="8" y="8" rx="2" ry="2" /> <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" /></svg>复制</button></div>
+          </div>
+          <div class="stat-grid">
+            <div class="stat"><div class="stat-label">调用</div><div class="stat-num" id="stat-tools">0</div></div>
+            <div class="stat"><div class="stat-label">平均响应</div><div class="stat-num" id="stat-avg">—</div></div>
+            <div class="stat"><div class="stat-label">失败</div><div class="stat-num" id="stat-fail">0</div></div>
+            <div class="stat"><div class="stat-label">成功率</div><div class="stat-num" id="stat-rate">—</div></div>
+          </div>
+        </div>
+
+        <div class="card" id="card-ai-clients">
+          <div class="card-head"><h2>让其他 AI 操作本软件</h2><span class="hint-inline">写入后，这些 AI 能查看状态、开隧道、管理账号</span></div>
+          <div class="list-group" id="ai-client-list"><div class="lg-row"><span class="lg-label">读取中…</span></div></div>
+          <div class="btn-row">
+            <button class="btn" id="btn-cli-install">安装命令行</button>
+            <button class="btn btn-ghost" id="btn-ai-prompt">复制给 AI 的提示词</button>
+            <button class="btn btn-ghost" id="btn-ai-config">复制通用配置</button>
+          </div>
+          <p class="hint" id="ai-cli-hint">命令行装好后，在终端输入 <code>windrise status</code> 查看状态，<code>windrise help</code> 查看全部命令。网页版 AI 用上面的 MCP 地址，并在请求头里带口令。</p>
+        </div>
+      </section>
+
+      <!-- ========== 多开浏览器页 ========== -->
+      <section class="page" id="page-browser">
+        <div class="card">
+          <div class="card-head">
+            <h2>一键打开</h2>
+          </div>
+          <div class="site-grid" id="site-grid"></div>
+          <form class="site-add" id="site-add" hidden autocomplete="off">
+            <input class="input" id="site-name" placeholder="名称（可留空）" maxlength="24" />
+            <input class="input mono" id="site-url" placeholder="网址，例如 chatgpt.com" />
+            <button class="btn btn-primary" type="submit" id="btn-site-save">添加</button>
+            <button class="btn btn-ghost" type="button" id="btn-site-cancel">取消</button>
+          </form>
+        </div>
+
+        <div class="card">
+          <div class="card-head">
+            <h2>账号</h2><span class="chip" id="chip-browser-count">0</span>
+            <div class="card-head-right">
+              <button class="btn btn-sm" id="btn-create-toggle"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14" /> <path d="M12 5v14" /></svg>新建</button>
+              <button class="icon-btn" id="btn-refresh-profiles" title="刷新" aria-label="刷新"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8" /> <path d="M21 3v5h-5" /> <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16" /> <path d="M8 16H3v5" /></svg></button>
+            </div>
+          </div>
+          <div class="create-box" id="create-box" hidden>
+            <div class="grid-form">
+              <div><label class="label" for="new-name">名称</label><input class="input" id="new-name" placeholder="店铺A / 小号1" /></div>
+              <div><label class="label" for="new-url">启动网址</label><input class="input" id="new-url" placeholder="https://example.com" /></div>
+              <div><label class="label" for="new-proxy">代理（可选）</label><input class="input mono" id="new-proxy" placeholder="socks5://host:port" /></div>
+              <div><label class="label" for="new-ua">User-Agent（可选）</label><input class="input mono" id="new-ua" placeholder="默认" /></div>
+            </div>
+            <div class="btn-row"><button class="btn btn-primary" id="btn-create-profile">创建</button></div>
+          </div>
+          <div class="profile-list" id="profile-list"></div>
+        </div>
+      </section>
+
+      <!-- ========== 工具页 ========== -->
+      <section class="page" id="page-tools">
+        <div class="card">
+          <div class="card-head"><h2>自定义工具</h2><span class="chip" id="chip-custom-count">0</span>
+            <div class="card-head-right"><button class="btn btn-ghost btn-sm" id="btn-new-tool" title="自己填写接口地址、命令等（进阶）">手动填写</button></div>
+          </div>
+          <div class="ai-add" id="ai-add">
+            <div class="ai-add-title">用一句话告诉 AI 你想要什么工具，它会自己建好</div>
+            <textarea class="input" id="ai-add-text" rows="2" maxlength="600" placeholder="例如：帮我加一个查天气的工具，输入城市名就能看到今天天气"></textarea>
+            <div class="ai-add-row">
+              <div class="te-presets" id="ai-add-examples"></div>
+              <button class="btn btn-primary btn-sm" id="btn-ai-add" type="button">复制给 AI</button>
+            </div>
+            <div class="ai-add-hint">复制后粘贴到已连上 Bridge 的 AI 对话里发送即可。建好的工具会出现在下面，马上能用。</div>
+          </div>
+          <div class="tool-editor" id="tool-editor" hidden>
+            <div class="te-top">
+              <div class="seg-mini" id="ct-type" role="radiogroup" aria-label="工具类型">
+                <span class="seg-mini-thumb" aria-hidden="true"></span>
+                <button role="radio" data-type="http" aria-checked="true">HTTP 请求</button>
+                <button role="radio" data-type="command" aria-checked="false">命令</button>
+                <button role="radio" data-type="text" aria-checked="false">固定文字</button>
+              </div>
+              <div class="te-presets" id="ct-presets"></div>
+            </div>
+            <div class="grid-form">
+              <div><label class="label" for="ct-name">工具名（英文）</label><input class="input mono" id="ct-name" placeholder="get_weather" maxlength="64" /></div>
+              <div><label class="label" for="ct-title">显示名</label><input class="input" id="ct-title" placeholder="查天气" maxlength="80" /></div>
+            </div>
+            <label class="label" for="ct-desc">说明（写给 AI：什么时候用、返回什么）</label>
+            <input class="input" id="ct-desc" placeholder="查询某个城市的实时天气" maxlength="1000" />
+            <label class="label">参数 <span class="label-hint">模板里用 {{参数名}} 引用</span></label>
+            <div class="param-list" id="ct-params"></div>
+            <button class="btn btn-ghost btn-sm" id="btn-add-param" type="button"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14" /> <path d="M12 5v14" /></svg>添加参数</button>
+            <div class="te-section" data-for="http">
+              <label class="label" for="ct-url">请求</label>
+              <div class="row"><select class="input" id="ct-method" style="width:110px"><option>GET</option><option>POST</option><option>PUT</option><option>PATCH</option><option>DELETE</option></select><input class="input mono" id="ct-url" placeholder="https://wttr.in/{{city}}?format=3" /></div>
+              <label class="label" for="ct-headers">请求头（每行 名称: 值，可选）</label>
+              <textarea class="input mono" id="ct-headers" rows="2" placeholder="Authorization: Bearer xxx"></textarea>
+              <label class="label" for="ct-body">请求体（可选，JSON 会自动转义参数）</label>
+              <textarea class="input mono" id="ct-body" rows="3" placeholder='{"q": "{{query}}"}'></textarea>
+            </div>
+            <div class="te-section" data-for="command" hidden>
+              <label class="label" for="ct-command">命令模板（参数会自动加引号，防止注入）</label>
+              <input class="input mono" id="ct-command" placeholder="git -C {{repo}} log --oneline -10" />
+              <div class="grid-form">
+                <div><label class="label" for="ct-cwd">工作目录（可选）</label><input class="input mono" id="ct-cwd" placeholder="默认第一个工作区根目录" /></div>
+                <div><label class="label" for="ct-timeout">超时（秒）</label><input class="input mono" id="ct-timeout" type="number" min="1" max="600" value="60" /></div>
+              </div>
+            </div>
+            <div class="te-section" data-for="text" hidden>
+              <label class="label" for="ct-text">返回的文字</label>
+              <textarea class="input" id="ct-text" rows="5" placeholder="团队代码规范：……"></textarea>
+            </div>
+            <div class="te-test">
+              <div class="te-test-args" id="ct-test-args"></div>
+              <button class="btn btn-sm" id="btn-ct-test" type="button">试运行</button>
+            </div>
+            <pre class="te-output" id="ct-output" hidden></pre>
+            <div class="btn-row">
+              <button class="btn btn-primary" id="btn-ct-save" type="button">保存</button>
+              <button class="btn btn-ghost" id="btn-ct-cancel" type="button">取消</button>
+            </div>
+          </div>
+          <div class="custom-list" id="custom-list"></div>
+        </div>
+        <div class="card">
+          <div class="card-head"><h2>全部工具</h2><span class="chip" id="chip-toolcount">0 个</span></div>
+          <div class="tool-list" id="tool-list"></div>
+        </div>
+        <div class="card">
+          <div class="card-head"><h2>调用流水</h2><div class="card-head-right"><button class="btn btn-ghost btn-sm" id="btn-clear-log">清空</button></div></div>
+          <div class="log" id="call-log"><div class="empty">等待调用…</div></div>
+        </div>
+      </section>
+
+      <!-- ========== 共享上下文页 ========== -->
+      <section class="page" id="page-context">
+        <div class="card">
+          <div class="card-head">
+            <h2>新建分组</h2>
+            <div class="card-head-right">
+              <span class="chip" id="chip-context-stats">—</span>
+              <button class="btn btn-ghost" id="btn-context-refresh"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8" /> <path d="M21 3v5h-5" /> <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16" /> <path d="M8 16H3v5" /></svg>刷新</button>
+            </div>
+          </div>
+
+          <div class="grid-form">
+            <div>
+              <label class="label">新建分组名</label>
+              <input class="input" id="new-group-name" placeholder="例如：店铺组 / 测试组" />
+            </div>
+            <div>
+              <label class="label">备注（可留空）</label>
+              <input class="input" id="new-group-note" placeholder="这组是干什么的" />
+            </div>
+          </div>
+          <div class="btn-row">
+            <button class="btn btn-primary" id="btn-create-group">新建分组</button>
+            <button class="btn" id="btn-context-prune">清理过期记忆</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-head"><h2>分组</h2><span class="hint-inline">同组窗口共享 Agent 记忆，登录态仍隔离</span></div>
+          <div class="group-list" id="group-list">
+            <div class="empty">还没有分组。上面起个名字点「新建分组」。</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-head"><h2>消息</h2>
+            <div class="card-head-right">
+              <select class="input" id="inbox-as" style="width:180px"></select>
+              <button class="btn" id="btn-inbox-load">读取</button>
+            </div>
+          </div>
+          <div class="msg-list" id="msg-list"><div class="empty">选个窗口点「读取」。</div></div>
+        </div>
+
+        <div class="card">
+          <div class="card-head"><h2>MemOS 云端记忆（可选）</h2><span class="hint-inline" id="memos-state">读取中…</span></div>
+          <p class="desc">去 MemOS 官网注册一个账号，拿到自己的 API Key 粘在这里。Key 只写进本机的外部 MCP 配置（<span class="mono">external-mcp.json</span> 的 memos 条目），面板和日志都拿不到。保存后会立刻把 MemOS 的 MCP 工具接进 Windrise；断开只是禁用该条目，Key 还留着，下次留空点「保存并连接」就能恢复。</p>
+          <div class="row act-row">
+            <input class="input mono" id="set-memos-key" type="password" placeholder="MemOS API Key" spellcheck="false" autocomplete="off" />
+            <button class="btn btn-primary" id="btn-save-memos-key">保存并连接</button>
+            <button class="btn" id="btn-disconnect-memos">断开</button>
+          </div>
+          <label class="label" for="set-memos-url">MCP 地址（首次接入必填；已有 memos 条目会沿用原地址）</label>
+          <input class="input mono" id="set-memos-url" placeholder="https://…/mcp" spellcheck="false" autocomplete="off" />
+        </div>
+      </section>
+
+      <!-- ========== 激活页 ========== -->
+      <section class="page" id="page-account">
+        <div class="card act-hero" id="act-card" data-state="none">
+          <div class="act-top">
+            <div class="act-icon"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="m15.5 7.5 2.3 2.3a1 1 0 0 0 1.4 0l2.1-2.1a1 1 0 0 0 0-1.4L19 4" /> <path d="m21 2-9.6 9.6" /> <circle cx="7.5" cy="15.5" r="5.5" /></svg></div>
+            <div class="act-main">
+              <h2 id="act-title">正在读取激活状态…</h2>
+              <div class="act-sub" id="act-sub">输入激活码后，就能打通隧道、让远程 AI 使用这台电脑。</div>
+            </div>
+            <button class="btn btn-ghost" id="btn-act-refresh" title="连上激活服务器核对一次"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8" /> <path d="M21 3v5h-5" /> <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16" /> <path d="M8 16H3v5" /></svg>联网核对</button>
+          </div>
+          <div class="act-stats" id="act-stats">
+            <div><span>剩余</span><b id="act-days">—</b></div>
+            <div><span>到期时间</span><b id="act-exp">—</b></div>
+            <div><span>本机</span><b id="act-device" class="mono">—</b></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-head"><h2>输入激活码</h2><span class="hint-inline">天卡 / 月卡 / 年卡 · 一码一台电脑 · 天数可叠加</span></div>
+          <div class="row act-row">
+            <input class="input mono act-input" id="act-code" placeholder="例如 WRM-XXXX-XXXX-XXXX-XXXX…" aria-label="激活码" name="activation-code" maxlength="40" spellcheck="false" autocomplete="off" />
+            <button class="btn btn-primary" id="btn-act-go">激活</button>
+          </div>
+          <div class="act-msg" id="act-msg" role="status" aria-live="polite"></div>
+          <div class="act-buy">
+            <div class="act-buy-text"><b>在软件里买时长</b><span id="act-buy-hint">支付宝扫码下单，付款成功后自动激活这台电脑。价格暂时没定或支付宝参数没配置时显示「暂未开放」。</span></div>
+            <div class="act-buy-btns" id="act-buy-btns">
+              <button class="btn btn-primary" data-pay-kind="D" disabled>天卡 · 读取中…</button>
+              <button class="btn btn-primary" data-pay-kind="M" disabled>月卡 · 读取中…</button>
+              <button class="btn btn-primary" data-pay-kind="Y" disabled>年卡 · 读取中…</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-head"><h2>说明</h2></div>
+          <ul class="act-notes">
+            <li>WRD 开头是天卡（1 天），WRM 是月卡（30 天），WRY 是年卡（365 天）。</li>
+            <li>还没到期时再输入新码，天数接着往后加，不会浪费。</li>
+            <li>一个码只能激活一台电脑。同一台电脑重装软件后，再输入原来的码可以找回剩余天数。</li>
+            <li>激活后软件会每隔几小时自动联网核对；断网最长可以用 7 天。</li>
+            <li>没激活或到期时，三种隧道（快速隧道 / 命名隧道 / ngrok）都打不通，远程 AI 的请求会被拒绝；浏览器和本机 MCP（127.0.0.1）不受影响。</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- ========== 设置页 ========== -->
+      <section class="page" id="page-settings">
+
+        <div class="card">
+          <div class="card-head"><h2>工作区</h2></div>
+          <label class="label">允许的根目录（每行一个）</label>
+          <textarea class="input mono" id="roots" rows="4"></textarea>
+          <div class="btn-row">
+            <button class="btn btn-primary" id="btn-save-roots">保存（立即生效）</button>
+            <button class="btn" id="btn-add-cwd">添加文件夹…</button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-head"><h2>安全策略</h2></div>
+          <label class="switch-row"><input type="checkbox" id="opt-approve" /><span>危险命令需要人工确认（删除、强推、结束进程等）。关闭时所有命令自动执行</span></label>
+          <label class="switch-row"><input type="checkbox" id="opt-agent-cursor" checked /><span>显示 AI 光标和控制条（AI 操作网页时显示虚拟光标，底部有「接管 / 终止任务」按钮）</span></label>
+          <label class="switch-row" hidden><input type="checkbox" id="opt-readonly" checked /><span>只读命令自动放行</span></label>
+          <label class="switch-row"><input type="checkbox" id="opt-jsonresp" /><span>MCP 用 JSON 一次性响应（只在某个客户端连不上时打开；默认边跑边回，长任务不会被 Cloudflare 100 秒掐断）</span></label>
+          <label class="label" for="set-tool-tier">对外暴露的工具</label>
+          <select class="input" id="set-tool-tier">
+            <option value="basic">基础档：基本功能 + 浏览器操作 + 鼠标兜底</option>
+            <option value="full">完整档：全部工具（含私人接入的 chatcut / memos）</option>
+          </select>
+          <p class="hint">基础档只带基本功能和浏览器操作，给别人用更清爽；完整档含你私人接入的工具。改完重启 Bridge 生效。</p>
+        </div>
+        <div class="card">
+          <div class="card-head"><h2>AI 空间</h2></div>
+          <label class="label" for="set-idle-minutes">AI 空间空闲多久自动收摊</label>
+          <select class="input" id="set-idle-minutes">
+            <option value="5">5 分钟</option>
+            <option value="10">10 分钟（默认）</option>
+            <option value="30">30 分钟</option>
+            <option value="0">永不（不关闭，空闲 10 分钟后只卸载内存）</option>
+          </select>
+          <p class="hint">AI 开的浏览器空间闲置到时间就自动关掉标签页、清掉记录，省内存；「我的」永远不动。用户要亲自看结果的 keep 空间不会被关，只会卸载内存。</p>
+        </div>
+        <div class="card" id="card-owner-auth">
+          <div class="card-head">
+            <h2>口令入口</h2>
+            <span class="chip" id="owner-auth-chip">读取中</span>
+          </div>
+          <p class="desc">用口令连的时候，地址里不带令牌，客户端在请求头里写 Authorization: Bearer 加口令。已经换成口令的客户端（比如 Muse），就别再给它路径地址了。</p>
+          <div class="kv">
+            <span>口令状态</span>
+            <code id="owner-auth-status">读取中…</code>
+          </div>
+          <div class="group-label">口令列表</div>
+          <div class="item-list" id="owner-auth-key-list"></div>
+          <div class="kv">
+            <span>本机入口</span>
+            <code id="owner-auth-local">—</code>
+            <button class="btn btn-sm" id="btn-owner-auth-copy-local">复制</button>
+          </div>
+          <div class="kv">
+            <span>公网入口</span>
+            <code id="owner-auth-public">—</code>
+            <button class="btn btn-sm" id="btn-owner-auth-copy-public">复制</button>
+          </div>
+          <div class="btn-row">
+            <button class="btn btn-primary" id="btn-owner-auth-add-key">新增口令</button>
+            <button class="btn btn-danger" id="btn-owner-auth-rotate-path">换路径令牌（旧地址作废）</button>
+          </div>
+          <div id="owner-auth-secret" hidden>
+            <div class="group-label" id="owner-auth-secret-title">新口令（只显示这一次）</div>
+            <div class="kv">
+              <span>口令</span>
+              <code id="owner-auth-secret-value"></code>
+              <button class="btn btn-sm btn-primary" id="btn-owner-auth-secret-copy">复制</button>
+            </div>
+            <p class="hint">这个口令只显示这一次。在客户端连接设置里填：请求头 Authorization，值 Bearer 加空格加口令</p>
+            <div class="btn-row">
+              <button class="btn btn-sm" id="btn-owner-auth-secret-hide">我已保存，隐藏</button>
+            </div>
+          </div>
+          <label class="switch-row">
+            <input type="checkbox" id="owner-auth-path-enabled" />
+            <span>公网允许路径令牌（/mcp/&lt;令牌&gt; 地址）</span>
+          </label>
+          <p class="hint" id="owner-auth-path-hint">先新增口令、让客户端换过去，再关</p>
+        </div>
+        <div class="card" id="card-connectors">
+          <div class="card-head"><h2>连接器：每个 AI 一把钥匙</h2></div>
+          <div id="connector-pending" hidden>
+            <div class="group-label">待批准</div>
+            <div class="approval-list" id="connector-pending-list"></div>
+          </div>
+          <p class="desc">现在已接入的客户端用的是主钥匙，能用全部窗口。新建的连接器默认碰不到任何窗口，要在下面勾选。</p>
+          <div class="item-list" id="connector-list"></div>
+          <div class="row" style="margin-top:12px">
+            <input class="input" id="connector-name" placeholder="给这个 AI 起个名字，例如「写作助手」" />
+            <button class="btn btn-primary" id="btn-connector-create">新建连接器</button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-head"><h2>启动与隧道参数</h2></div>
+
+          <label class="label">Bridge 端口</label>
+          <input class="input mono" id="set-port" type="number" min="0" max="65535" placeholder="0 = 随机" />
+          <p class="hint">
+            0 = 每次随机（最省心）。要接命名隧道必须填固定值 ——
+            cloudflared 的转发规则里写的是死端口，随机端口隧道指不到。
+            改了要重启 Bridge 才生效。
+          </p>
+
+          <div class="field-row">
+            <div>
+              <label class="label">公网域名</label>
+              <input class="input mono" id="set-tunnel-host" placeholder="mcp.example.com" />
+            </div>
+            <div>
+              <label class="label">隧道 ID 或名字</label>
+              <input class="input mono" id="set-tunnel-id" placeholder="留空则用令牌模式" />
+            </div>
+          </div>
+          <label class="label">凭据文件（可留空自动找）</label>
+          <input class="input mono" id="set-tunnel-cred" placeholder="自动在 ~/.cloudflared 里找" />
+          <label class="label">隧道令牌（仪表板管理时才填）</label>
+          <input class="input mono" id="set-tunnel-token" type="password" placeholder="eyJhIjoi… 一长串" />
+          <p class="hint">
+            「隧道 ID」和「令牌」二选一：前者是本地管理，后者是仪表板管理。
+            凭据文件留空会自动在 <code>~/.cloudflared</code> 里按隧道 ID 匹配 ——
+            注意凭据文件名通常是隧道 UUID 而不是隧道名字，自动找能处理这种对不上的情况。
+          </p>
+
+          <div class="field-row">
+            <div>
+              <label class="label">ngrok 令牌</label>
+              <input class="input mono" id="set-ngrok-token" type="password" placeholder="用 ngrok 时才填" />
+            </div>
+            <div>
+              <label class="label">ngrok 固定域名（可选）</label>
+              <input class="input mono" id="set-ngrok-domain" placeholder="免费版没有，留空即可" />
+            </div>
+          </div>
+          <p class="hint">
+            ngrok v3 必须给令牌才能用。去
+            <a href="#" id="link-ngrok-token">ngrok 后台</a> 复制一个填这里。
+          </p>
+
+          <label class="switch-row"><input type="checkbox" id="set-auto-connect" /><span>打开软件自动连接（启动 Bridge 并按你选的连接方式打通隧道）</span></label>
+          <label class="switch-row"><input type="checkbox" id="set-tunnel-auto" /><span>启动 Bridge 后自动连命名隧道 / ngrok（旧选项）</span></label>
+          <label class="switch-row"><input type="checkbox" id="set-close-tray" checked /><span>关闭窗口时缩到托盘，后台继续运行</span></label>
+          <label class="switch-row"><input type="checkbox" id="set-auto-bridge" checked /><span>打开程序时自动启动 Bridge</span></label>
+          <label class="switch-row"><input type="checkbox" id="set-autolaunch" /><span>开机自启（登录 Windows 后自动打开本程序）</span></label>
+
+          <div class="btn-row">
+            <button class="btn btn-primary" id="btn-save-startup">保存</button>
+            <button class="btn" id="btn-restart-bridge">保存并重启 Bridge</button>
+            <button class="btn" id="btn-start-tunnel">立即连隧道</button>
+            <button class="btn" id="btn-stop-tunnel">断开隧道</button>
+          </div>
+          <div class="kv"><span>当前公网地址</span><code id="set-public-url">—</code></div>
+        </div>
+        <div class="card">
+          <div class="card-head"><h2>一键开通固定地址</h2></div>
+          <p class="desc">
+            自动建隧道 + 配转发 + 配 DNS，省掉手工四步。用的是你 Cloudflare 账号的 API 权限，
+            凭据默认从 <code>~/.cloudflared/cert.pem</code> 读（cloudflared 登录时留下的）。
+          </p>
+
+          <div class="kv"><span>凭据状态</span><code id="cf-cred-status">检查中…</code></div>
+          <div class="kv"><span>可用域名</span><code id="cf-zones">—</code></div>
+
+          <label class="label">Cloudflare API 令牌（可选）</label>
+          <input class="input mono" id="set-cf-token" type="password" placeholder="留空则自动读 cloudflared 登录留下的凭据" spellcheck="false" autocomplete="off" />
+          <p class="hint">
+            按「自有域名教程」创建令牌：权限 Zone / DNS / Edit 和 Account / Cloudflare Tunnel / Edit。
+            留空时自动用 <code>~/.cloudflared/cert.pem</code>（cloudflared 登录时留下的）。
+          </p>
+
+          <label class="label">想用的公网域名</label>
+          <input class="input mono" id="cf-hostname" placeholder="mcp.你的域名.com" />
+          <p class="hint">
+            填一个子域名（比如 <code>mcp.你的域名.com</code>）。这个域名必须在你的 Cloudflare 账号里。
+            如果它已经有 DNS 记录了，下面会明确告诉你「会覆盖什么」。
+          </p>
+
+          <div class="btn-row">
+            <button class="btn" id="btn-cf-preview">检查会做什么（不改任何东西）</button>
+            <button class="btn btn-primary" id="btn-cf-provision" disabled>确认创建</button>
+          </div>
+
+          <div id="cf-preview" class="cf-preview" hidden></div>
+        </div>
+        <div class="card">
+          <div class="card-head"><h2>数据位置</h2></div>
+          <div class="kv"><span>数据目录</span><code id="data-home">—</code></div>
+          <div class="kv"><span>令牌文件</span><code id="token-file">—</code></div>
+          <div class="kv"><span>工作区共享</span><code id="hub-root">—</code></div>
+          <div class="btn-row"><button class="btn" id="btn-open-data">打开数据目录</button></div>
+        </div>
+        <div class="card">
+          <div class="card-head"><h2>关于与更新</h2></div>
+          <div class="kv"><span>当前版本</span><code id="upd-version">—</code></div>
+          <div class="kv"><span>状态</span><span id="upd-status">—</span></div>
+          <label class="auto-switch"><input type="checkbox" class="switch" id="upd-auto" /><span>自动检查更新</span></label>
+          <div class="btn-row"><button class="btn" id="btn-upd-check">检查更新</button></div>
+        </div>
+      </section>
+    </div>
+  </main>
+</div>
+<script type="module" src="ui/motion.js"></script>
+<script type="module" src="ui/app.js"></script>
+  <div class="ws-modal" id="ws-modal" hidden>
+    <div class="ws-dialog" role="dialog" aria-modal="true" aria-labelledby="ws-title">
+      <h2 id="ws-title">选择 AI 能访问的文件夹</h2>
+      <p class="ws-sub" id="ws-sub">隧道已打通。AI 读写文件只能在下面这些文件夹里进行，其他地方的文件它打不开。把你的项目、资料所在的文件夹加进来。以后可以在「设置 → 工作区」随时修改，立即生效，不用重新连接。</p>
+      <ul class="ws-items" id="ws-items"></ul>
+      <div class="ws-actions">
+        <button class="btn btn-primary" id="btn-ws-add">＋ 添加文件夹…</button>
+        <span class="ws-spacer"></span>
+        <button class="btn btn-plain" id="btn-ws-later">稍后</button>
+        <button class="btn" id="btn-ws-done">完成</button>
+      </div>
+    </div>
+  </div>
+  <div class="ws-modal" id="cc-modal" hidden>
+    <div class="ws-dialog" role="dialog" aria-modal="true" aria-labelledby="cc-title">
+      <h2 id="cc-title">选择连接方式</h2>
+      <p class="ws-sub">远程 AI 要通过一条隧道连到这台电脑。下面三种由你决定用哪一种，以后可以在「Bridge → 隧道」里随时更换。</p>
+      <div class="cc-options" role="radiogroup" aria-label="连接方式">
+        <label class="cc-option"><input type="radio" name="cc-provider" value="cloudflare" />
+          <div><div class="cc-name">快速隧道 <span class="cc-tag">免费 · 免配置</span></div>
+          <div class="cc-desc">马上就能用。每次重新连接地址会变，用路径地址的客户端需要跟着更新。</div></div></label>
+        <label class="cc-option"><input type="radio" name="cc-provider" value="cloudflare-named" />
+          <div><div class="cc-name">固定地址（命名隧道） <span class="cc-tag">地址不变</span></div>
+          <div class="cc-desc">用你自己的域名（需托管在 Cloudflare），地址一直不变、流量不限。第一次要在「设置」里开通。</div></div></label>
+        <label class="cc-option"><input type="radio" name="cc-provider" value="ngrok" />
+          <div><div class="cc-name">ngrok <span class="cc-tag">无需域名</span></div>
+          <div class="cc-desc">注册 ngrok 账号并填入 authtoken，免费送一个固定子域名，每月 1GB 流量。</div></div></label>
+      </div>
+      <label class="cc-auto"><input type="checkbox" id="cc-auto" /> 以后打开软件时自动连接（默认关闭）</label>
+      <div class="ws-actions">
+        <button class="btn btn-plain" id="btn-cc-later">稍后再选</button>
+        <span class="ws-spacer"></span>
+        <button class="btn" id="btn-cc-save">保存</button>
+        <button class="btn btn-primary" id="btn-cc-connect">保存并连接</button>
+      </div>
+    </div>
+  </div>
+  <div class="ws-modal" id="pay-modal" hidden>
+    <div class="ws-dialog" role="dialog" aria-modal="true" aria-labelledby="pay-title">
+      <h2 id="pay-title">支付宝扫码支付</h2>
+      <p class="ws-sub" id="pay-sub">用支付宝扫二维码付款，付完不用关窗口，状态会自动更新。</p>
+      <div class="pay-qr-wrap" id="pay-qr-wrap" hidden>
+        <img class="pay-qr" id="pay-qr" alt="支付宝二维码" />
+        <div class="hint" id="pay-amount"></div>
+      </div>
+      <div class="act-msg" id="pay-msg" role="status" aria-live="polite"></div>
+      <div class="ws-actions">
+        <span class="ws-spacer"></span>
+        <button class="btn btn-plain" id="btn-pay-close">关闭</button>
+      </div>
+    </div>
+  </div>
+  <div class="ws-modal" id="guide-modal" hidden>
+    <div class="ws-dialog guide-dialog" role="dialog" aria-modal="true" aria-labelledby="guide-title">
+      <nav class="guide-nav" id="guide-nav" aria-label="全部教程"></nav>
+      <div class="guide-main">
+        <div class="guide-head">
+          <h2 id="guide-title">教程</h2>
+          <span class="guide-meta" id="guide-meta"></span>
+          <button class="btn btn-sm btn-plain" id="btn-guide-full" title="全屏 / 还原">全屏</button>
+          <button class="btn btn-sm btn-plain" id="btn-guide-close" aria-label="关闭">关闭</button>
+          <span class="guide-progress" aria-hidden="true"></span>
+        </div>
+        <div class="guide-scroll" id="guide-scroll">
+          <p class="ws-sub" id="guide-intro"></p>
+          <div id="guide-diagram" hidden></div>
+          <ol class="guide-steps" id="guide-steps"></ol>
+          <div class="guide-tips" id="guide-tips"></div>
+        </div>
+        <div class="ws-actions guide-foot" id="guide-foot"></div>
+      </div>
+    </div>
+  </div>
+<div class="ws-modal" id="client-config-modal" hidden>
+    <div class="ws-dialog" role="dialog" aria-modal="true" aria-labelledby="client-config-title">
+      <h2 id="client-config-title">按客户端复制配置</h2>
+      <p class="ws-sub">每个客户端的字段名和存放位置都不一样，直接复制对应那一条，粘到该客户端的配置文件或表单里。带口令的配置等同于密码，别外传。点「步骤」看放哪、怎么验证和常见坑。</p>
+      <p class="ws-sub client-config-mode" id="client-config-mode"></p>
+      <div class="client-config-groups" id="client-config-groups"></div>
+      <div class="ws-actions">
+        <span class="ws-spacer"></span>
+        <button class="btn btn-plain" id="btn-client-config-close">关闭</button>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

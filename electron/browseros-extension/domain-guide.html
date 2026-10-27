@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>自有域名教程 · Windrise</title>
+  <link rel="stylesheet" href="dashboard.css">
+</head>
+<body>
+  <div class="guide-wrap">
+    <h1>自有域名教程：给你的 Windrise 一个固定公网地址</h1>
+    <p class="lead">要走 Cloudflare 命名隧道。全程一次性，大约 10 分钟；弄完地址永远不变，AI 客户端配一次就够。</p>
+
+    <div class="card">
+      <h2>1. 为什么要自己的域名（我们不给你发子域名）</h2>
+      <p>快速隧道的地址每次重连都会变（AI 客户端要跟着改地址）；ngrok 免费版有额度和免费域名数量限制。自己的域名配 Cloudflare 命名隧道：<b>地址固定、流量不限、速度稳定</b>。</p>
+      <p>Windrise <b>不给用户分配我们的子域名</b>：子域名挂在我们账号下，账号被用来违规时责任担不起。固定地址请用<b>你自己的域名、你自己的 Cloudflare 账号</b>，Windrise 只提供教程、一键配置和一段给 AI 的提示词。</p>
+    </div>
+
+    <div class="card">
+      <h2>2. 去哪买域名</h2>
+      <p>任何注册商都行：阿里云、腾讯云、Namecheap、GoDaddy、Cloudflare Registrar……挑个便宜的（常见后缀每年约几十元）。买的时候只需要一个裸域名，比如 <code>example.com</code>，不用买任何附加服务。</p>
+      <p>域名已经买好了？直接看第 3 步，把它的 DNS 托管到 Cloudflare（免费）。</p>
+    </div>
+
+    <div class="card">
+      <h2>3. 把域名加到 Cloudflare（改 NS，免费）</h2>
+      <ol>
+        <li>注册 / 登录 Cloudflare：<a href="https://dash.cloudflare.com/" target="_blank" rel="noopener noreferrer">dash.cloudflare.com</a>。</li>
+        <li>点「添加站点 / Add a domain」，输入你的域名（只填裸域名），计划选 <b>Free 免费版</b>。</li>
+        <li>Cloudflare 会给出<b>两个 DNS 服务器地址</b>（形如 <code>xxx.ns.cloudflare.com</code> 和 <code>yyy.ns.cloudflare.com</code>）。复制下来。</li>
+        <li>回到你<b>买域名的地方</b>（注册商后台），找到域名管理里的「修改 DNS 服务器 / 自定义 NS」，把原来的一对换成 Cloudflare 给的这两个，保存。</li>
+        <li>NS 生效一般几分钟到几小时。等 Cloudflare 后台显示这个域名「有效 / Active」，再往下走。</li>
+      </ol>
+    </div>
+
+    <div class="card">
+      <h2>4. 创建 Cloudflare API 令牌（给 Windrise 一键配置用的权限）</h2>
+      <ol>
+        <li>在 Cloudflare 后台右上角点<b>你的头像 → My Profile → API Tokens</b>。</li>
+        <li>点 <b>Create Token</b>，选最下面的 <b>Create Custom Token</b>（自定义令牌）。</li>
+        <li>在 <b>Permissions</b> 里加两条权限：
+          <ul>
+            <li><b>Zone → DNS → Edit</b>（让 Windrise 建 DNS 记录）</li>
+            <li><b>Account → Cloudflare Tunnel → Edit</b>（让 Windrise 建隧道）</li>
+          </ul>
+        </li>
+        <li><b>Zone Resources</b> 可以选「Include → All zones」，也可以只选你那个域名；Account Resources 保持默认即可。</li>
+        <li>点 <b>Continue to summary</b> → <b>Create Token</b>，把生成的令牌<b>复制好</b>（它只显示一次）。</li>
+      </ol>
+      <p class="guide-err">令牌等于账号的一把钥匙：别发群里、别截图、别交给不信任的 AI。</p>
+    </div>
+
+    <div class="card">
+      <h2>5. 回到 Windrise 一键配置</h2>
+      <ol>
+        <li>打开 Windrise 设置窗口：托盘图标 →「设置与教程」，或浏览器侧边栏底部「重新打开初次设置」里也能进去。</li>
+        <li>在<b>设置页</b>往下找到「一键开通固定地址」：把第 4 步的 API 令牌粘到「Cloudflare API 令牌」输入框；「想用的公网域名」填一个子域名，比如 <code>mcp.你的域名.com</code>。</li>
+        <li>先点<b>「检查会做什么（不改任何东西）」</b>，看清楚会建什么、会覆盖什么；确认没问题再点<b>「确认创建」</b>。</li>
+        <li>开通成功后，Windrise 会自动把连接方式切成「命名隧道（固定地址）」并重新连接。看到「已连接」就完成了。</li>
+      </ol>
+      <div class="row">
+        <button type="button" class="primary" id="btn-open-settings">打开 Windrise 设置（填令牌 / 一键开通）</button>
+      </div>
+      <p class="guide-ok">现在把 Windrise 首页连接卡片里「新增口令」生成的口令和公网 MCP 地址发给 AI，地址以后再也不会变。</p>
+    </div>
+
+    <div class="card">
+      <h2>6. 常见报错</h2>
+      <ul>
+        <li><b>令牌权限不足（建隧道 / 改 DNS 报 403）</b>：回到第 4 步核对，两条权限是 <code>Zone:DNS:Edit</code> 和 <code>Account:Cloudflare Tunnel:Edit</code>，一条都不能少。</li>
+        <li><b>域名不可用（不在你的 Cloudflare 账号里）</b>：第 3 步的 NS 还没生效，或域名托管在别的账号。等几分钟重试，或去 Cloudflare 后台看状态是不是「有效 / Active」。</li>
+        <li><b>令牌无效 / API token 错</b>：令牌复制得不完整，重新生成一个再粘。</li>
+        <li><b>已开通但网址打不开（1033 / 530）</b>：隧道没在跑。回 Windrise 点「一键连接」；再看 Cloudflare DNS 里那条 <code>mcp</code> 的 CNAME 是否指向 <code>xxx.cfargotunnel.com</code> 且云朵是橙色（已代理）。</li>
+        <li><b>一直「连接中」</b>：多半是代理软件或防火墙挡了 cloudflared，看 Windrise 里的「代理 / 网络」教程。</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>7. 让 AI 帮你点完这些步骤（可选）</h2>
+      <p>把下面这段话发给<b>已经连上你这台电脑的 AI</b>，它会用 Windrise 的浏览器工具（空间 + 页面读写点）在 Cloudflare 网页上替你点完注册、建隧道、配 DNS。敏感步骤它不会碰：<b>登录 Cloudflare 必须你自己来</b>（登录页 AI 进不去），<b>API 令牌生成后你自己复制粘贴进 Windrise 设置</b>，AI 不读取、不转述令牌。</p>
+      <div class="codebox" id="domain-prompt"></div>
+      <div class="row">
+        <button type="button" class="primary" id="btn-copy-prompt">一键复制提示词</button>
+      </div>
+    </div>
+
+    <div class="footer" id="guide-hint"></div>
+  </div>
+  <script src="domain-guide.js"></script>
+</body>
+</html>

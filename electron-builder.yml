@@ -1,0 +1,201 @@
+# ---------------------------------------------------------------------------
+# electron-builder 配置 —— 把 Windrise Bridge 打成 Windows 桌面应用
+#
+# 用法（不依赖 package.json 里的 build 字段，也不需要改 package.json）：
+#   npx electron-builder --config electron-builder.yml            # 全量：nsis + portable
+#   npx electron-builder --config electron-builder.yml --dir      # 只出免安装目录（快，用于调试）
+#   node scripts/build.mjs                                        # 上面那条的封装（先出图标再打包）
+#
+# 打 NSIS 安装包之前，浏览器安装包要放在 build/browser/windrise-browser-setup.exe：
+#   node scripts/prepare-browser-installer.mjs "C:\path\to\Windrise浏览器测试版-安装.exe"
+# 只影响 NSIS 安装包：--dir 和只打 portable 时不需要它。
+# 便携版不带浏览器，安装目录里也不留浏览器安装器。
+#
+# 产物：dist/ 目录下
+#   - windrise-bridge-<版本>-setup.exe      NSIS 安装包（可选安装目录、建快捷方式、顺带装浏览器内核）
+#   - windrise-bridge-<版本>-portable.exe   免安装单文件（不带浏览器内核）
+#   - win-unpacked/                        解包后的应用目录（安装包就是拿它压的）
+# ---------------------------------------------------------------------------
+
+appId: com.windrise.bridge
+productName: Windrise Bridge
+copyright: Copyright © 2025 Windrise
+
+# 补一个 author：electron-builder 会拿它当安装包的「发行者」，
+# 而 package.json 里没有 author（本仓库约定不改 package.json）。
+extraMetadata:
+  author:
+    name: Windrise
+    email: dev@windrise.invalid
+
+directories:
+  output: dist
+  buildResources: build
+
+# 打进 app.asar 的内容。
+# 注意：下面的排除项一律写成「项目根目录相对路径」。
+# 千万不要用 **/dist/** 这种全局通配 —— 依赖的运行时也在 dist/ 里
+# （@modelcontextprotocol/sdk 的入口就是 node_modules/.../sdk/dist/...），
+# 一把梭会把 MCP SDK 整个干掉，打出来的包一启动就崩。
+files:
+  - "**/*"
+  # 探针 / 冒烟 / 文档 / 构建脚手架，都不进发行包
+  - "!_probe/**"
+  - "!_smoke/**"
+  # 改代码前的备份（里面有旧版预置数据：隧道凭据、AI Key），绝不能进包
+  - "!_backup/**"
+  # 激活服务端 / 官网 / 发布临时目录：里面有管理口令 admin-token.txt 和全部激活码明文，绝不能进包
+  - "!worker/**"
+  - "!server/**"
+  - "!site/**"
+  - "!_web/**"
+  - "!_release-tmp/**"
+  - "!交接*.md"
+  - "!**/*.csv"
+  - "!**/admin-token*"
+  - "!**/*.pem"
+  - "!需求文档/**"
+  - "!docs/**"
+  - "!tools/**"
+  - "!scripts/**"
+  - "!build/**"
+  - "!.github/**"
+  - "!dist/**"
+  # 开发运行时的数据目录（登录态、令牌）绝不能打进安装包
+  - "!data/**"
+  # 旧数据目录的备份（data.safe-shell-* 等）同样是登录态和令牌，也不能进包
+  - "!data.*/**"
+  - "!electron/_preview*"
+  - "!probe.mjs"
+  # 仓库自己的说明/配置/锁文件也没必要跟着应用走
+  - "!README.md"
+  - "!electron-builder.yml"
+  - "!package-lock.json"
+  # 历史上的 ESM 版本残留 + 各种自测/演示脚本
+  - "!electron/*.old-esm"
+  - "!src/**/*.old-esm"
+  - "!src/**/*-selftest.mjs"
+  - "!src/**/*-demo.mjs"
+  # 服务端（账号/支付/授权）单独部署到 VPS，绝不能进客户端安装包（里面可能有私钥和 .env）
+  - "!server/**"
+  - "!**/*.pem"
+  - "!**/.env*"
+  # 依赖里的无用文件：源码映射、类型声明、文档、测试 —— 运行时一个都用不到
+  - "!**/node_modules/**/*.map"
+  - "!**/node_modules/**/*.d.ts"
+  - "!**/node_modules/**/*.d.cts"
+  - "!**/node_modules/**/*.d.mts"
+  - "!**/node_modules/**/*.{md,markdown}"
+  - "!**/node_modules/**/{CHANGELOG,HISTORY,AUTHORS,CONTRIBUTING}*"
+  - "!**/node_modules/**/{test,tests,__tests__,example,examples,coverage,.github}/**"
+  - "!**/node_modules/@types/**"
+  # TypeScript 随安装包附带（lsp / get_diagnostics 用），只留 tsserver 运行需要的部分
+  - "!**/node_modules/typescript/bin/**"
+  - "!**/node_modules/typescript/lib/{tsc,_tsc,typingsInstaller,_typingsInstaller,watchGuard}.js"
+  - "!**/node_modules/typescript/lib/{cs,de,es,fr,it,ja,ko,pl,pt-br,ru,tr,zh-tw}/**"
+  - "node_modules/typescript/lib/lib*.d.ts"
+  - "!**/node_modules/.bin/**"
+
+# 项目里没有原生模块，跳过 rebuild（省时间，也避免误触发 node-gyp）
+npmRebuild: false
+# 安装包体积优先（多花几十秒压缩）
+compression: maximum
+# Chromium 自带 50+ 种语言包（约 40MB），只留中英文
+electronLanguages:
+  - zh-CN
+  - en-US
+
+# 关键：不要用 asar。
+# src/ 是 ESM，主进程用「动态 import(pathToFileURL(...))」加载它（见 electron/main.cjs 里的 SRC()）。
+# Node 的 ESM loader 走的是内部 fs，读不到 asar 归档里的内容，读到的是空字符串，
+# 于是 import 直接抛「Unexpected end of input」。
+# 实测：asar:true 时点「启动 Bridge」必然失败（已复现，见报告）。
+# 改成 asar:false（把文件直接铺在 resources/app/ 下）后，ESM 加载行为与开发模式完全一致。
+# 代价：安装目录文件数变多（约 2500 个）、安装稍慢；换来的是「打出来就能跑」。
+asar: false
+
+win:
+  target:
+    - target: nsis
+      arch:
+        - x64
+    - target: portable
+      arch:
+        - x64
+  icon: build/icon.ico
+  # 随包附带 cloudflared（scripts/fetch-cloudflared.mjs 下载到 build/bin/win-x64）
+  extraResources:
+    - from: build/bin/win-${arch}
+      to: bin
+
+# 额外文件：直接放到安装目录（exe 旁边）。
+# launch-windrise-bridge.cmd 用来清掉 ELECTRON_RUN_AS_NODE 再启动 —— 见 README「常见问题」。
+extraFiles:
+  - from: build/extra
+    to: .
+    filter:
+      - "**/*"
+
+# 预置数据（测试版）：build/seed/ → resources/seed/，首次运行复制到数据目录（见 main.cjs applySeed）。
+# 里面有 AI Key 和隧道凭据，这种包只能自己测试用，不要外发。由 scripts/make-seed 生成，没有这个目录就是干净的正式包。
+extraResources:
+  - from: build/seed
+    to: seed
+    filter:
+      - "**/*"
+
+nsis:
+  oneClick: false
+  perMachine: false
+  allowElevation: true
+  allowToChangeInstallationDirectory: true
+  createDesktopShortcut: true
+  createStartMenuShortcut: true
+  shortcutName: Windrise Bridge
+  # 升级/卸载时保留安装目录下的 data\（见 build/installer.nsh）。
+  # 同一个文件里的 customInstall 还会顺带安装浏览器内核：
+  #   - 浏览器安装包从 build/browser/windrise-browser-setup.exe 编译进 NSIS；
+  #   - 安装时临时解到 $PLUGINSDIR，装完删除；
+  #   - 已经装过浏览器的机器跳过（先看 %LOCALAPPDATA%\Windrise，再看老版的 %LOCALAPPDATA%\BrowserOS）；
+  #   - 只进 NSIS，不进 portable，也不进 app.asar / resources。
+  include: build/installer.nsh
+  installerIcon: build/icon.ico
+  uninstallerIcon: build/icon.ico
+  installerHeaderIcon: build/icon.ico
+  # 用户数据在安装目录 data\ 下，由 installer.nsh 保留；这里只管 %APPDATA%
+  deleteAppDataOnUninstall: false
+  runAfterFinish: true
+  artifactName: "windrise-bridge-${version}-setup.${ext}"
+
+portable:
+  artifactName: "windrise-bridge-${version}-portable.${ext}"
+  requestExecutionLevel: user
+
+# ---------------------------------------------------------------------------
+# macOS（必须在 Mac 上打：node scripts/build.mjs --mac；或用 .github/workflows/build-mac.yml 在 GitHub 的 Mac 机器上打）
+# 没有 Apple 开发者证书时用 ad-hoc 签名（identity: "-"），用户第一次打开要「右键 → 打开」；
+# 有证书时设置环境变量 CSC_LINK / CSC_KEY_PASSWORD，再加 APPLE_ID / APPLE_APP_SPECIFIC_PASSWORD / APPLE_TEAM_ID 自动公证，就能双击直接打开。
+# ---------------------------------------------------------------------------
+mac:
+  target:
+    - target: dmg
+      arch: [arm64, x64]
+    - target: zip
+      arch: [arm64, x64]
+  icon: electron/assets/icon.png
+  category: public.app-category.developer-tools
+  identity: "-"
+  hardenedRuntime: true
+  gatekeeperAssess: false
+  entitlements: build/entitlements.mac.plist
+  entitlementsInherit: build/entitlements.mac.plist
+  extraResources:
+    - from: build/bin/mac-${arch}
+      to: bin
+  extendInfo:
+    LSUIElement: false
+    NSAppleEventsUsageDescription: "Windrise Bridge 需要控制浏览器窗口来完成 AI 操作。"
+
+dmg:
+  artifactName: "windrise-bridge-${version}-mac-${arch}.${ext}"
+  title: "Windrise Bridge"

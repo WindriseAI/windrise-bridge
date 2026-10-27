@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Windrise 侧边栏</title>
+  <link rel="stylesheet" href="dashboard.css">
+</head>
+<body>
+  <div class="wrap">
+    <header class="top">
+      <div class="brand">Windrise</div>
+      <div class="badge" id="conn-badge">等待状态</div>
+    </header>
+
+    <section class="card">
+      <h2>这一格</h2>
+      <div class="self-line" id="self-line">等待主程序状态</div>
+      <div class="note" id="self-note">打开一个格子后，主程序会自动推送。</div>
+      <div class="layout-grid" aria-label="布局">
+        <button type="button" data-action="layout:1x1">1×1</button>
+        <button type="button" data-action="layout:1x2">1×2</button>
+        <button type="button" data-action="layout:2x2">2×2</button>
+        <button type="button" data-action="layout:3x3">3×3</button>
+      </div>
+      <button type="button" class="danger wide" data-action="hide-self">收起这一格</button>
+      <div class="hint" id="action-hint">布局以这一格为基准；收起后进程和登录态都还在。</div>
+    </section>
+
+    <section class="card">
+      <h2>连接</h2>
+      <div class="kv"><span>状态</span><b id="conn-level">—</b></div>
+      <div class="kv"><span>公网地址</span><code id="conn-url">—</code></div>
+      <div class="kv"><span>授权</span><b id="conn-license">—</b></div>
+      <div class="kv"><span>口令</span><b id="token-count">—</b></div>
+      <div class="row">
+        <button type="button" id="btn-copy-url" disabled>复制公网地址</button>
+        <button type="button" data-action="show-settings">管理口令</button>
+      </div>
+      <div class="row" id="license-activate-row" hidden>
+        <button type="button" class="danger" data-action="show-settings">隧道需要激活 · 打开设置</button>
+      </div>
+      <div class="hint">地址里不带口令。客户端在请求头里加 Authorization: Bearer 口令。浏览器和本机 MCP 免费；隧道需要激活。</div>
+    </section>
+
+    <section class="card">
+      <h2>环境</h2>
+      <div class="kv"><span>隧道类型</span><b id="tunnel-type">—</b></div>
+      <div class="kv"><span>工具档位</span><b id="tool-tier">—</b></div>
+      <div class="kv"><span>管理员代理</span><b id="broker-state">—</b></div>
+      <div class="kv"><span>共享上下文</span><b id="context-state">—</b></div>
+    </section>
+
+    <section class="card">
+      <h2>打开的格子</h2>
+      <div class="list" id="grid-list"></div>
+      <div class="hint">点一个格子把它摆回屏幕内；收起的格子会显示收起前的编号。</div>
+    </section>
+
+    <section class="card">
+      <h2>这一格的空间</h2>
+      <div class="list" id="space-list"></div>
+      <div class="hint">AI 的空间和人的「我的」共用这个账号的登录；点一个 AI 空间切到它的主标签页。</div>
+    </section>
+
+    <section class="card">
+      <h2>钉住</h2>
+      <div class="pin-head">
+        <span class="pin-space-name" id="pin-space-name">我的</span>
+        <button type="button" id="btn-pin-current" disabled>钉住当前页</button>
+      </div>
+      <div class="list" id="pin-list"></div>
+      <div class="hint">像快速访问：点一条在当前窗口新开标签页（AI 空间里会并进它的标签组）。人和 AI 各钉各的空间，互不挤占。</div>
+    </section>
+
+    <section class="card">
+      <h2>导入 Cookie</h2>
+      <input type="file" id="cookie-file" accept=".txt,.json,text/plain,application/json" hidden>
+      <div class="row">
+        <button type="button" id="btn-cookie-file">选择 Cookie 文件…</button>
+      </div>
+      <div class="hint">只读你本机用 Cookie 导出插件生成的文件（cookies.txt 或 JSON），不上传。只导入到这一格（当前浏览器 = 当前账号）。</div>
+      <div id="cookie-preview" hidden>
+        <div class="kv"><span>将导入</span><b id="cookie-count">—</b></div>
+        <div class="kv"><span>涉及网站</span><b id="cookie-domain-count">—</b></div>
+        <div class="tag-list" id="cookie-domains"></div>
+        <div class="hint">只列前 20 个域名。</div>
+        <div class="hint" id="cookie-skip"></div>
+        <div class="row">
+          <button type="button" class="primary" id="btn-cookie-confirm">确认导入</button>
+          <button type="button" id="btn-cookie-cancel">取消</button>
+        </div>
+      </div>
+      <div class="hint" id="cookie-status">选一个文件，先预览，确认后才写入。</div>
+    </section>
+
+    <section class="card">
+      <h2>插件</h2>
+      <label class="check-line">
+        <input type="checkbox" id="ext-autosync"> 新装的插件自动装到所有格子
+      </label>
+      <div class="list" id="ext-list"></div>
+      <div class="hint" id="ext-hint">从 Chrome 应用商店装的插件会列在这里。装到所有格子只复制插件本身，不复制插件里的登录和数据。</div>
+    </section>
+
+    <section class="card">
+      <h2>最近 AI 操作</h2>
+      <div class="list" id="recent-list"></div>
+      <div class="hint">只显示工具名、时间和成功与否，不含参数内容。</div>
+    </section>
+
+    <section class="card">
+      <h2>推荐</h2>
+      <a class="recommend-link" id="recommend-link" rel="noopener noreferrer">
+        <span class="recommend-title" id="recommend-title">暂无推荐</span>
+        <span class="recommend-desc" id="recommend-desc"></span>
+      </a>
+      <div class="hint">推荐位放在我们自己的界面里，不往别人的网站塞广告。</div>
+    </section>
+
+    <div class="footer">
+      <div id="updated">主程序还没推送状态。</div>
+      <button type="button" class="footer-link" data-action="onboarding-open">重新打开初次设置</button>
+    </div>
+  </div>
+  <script src="pins.js"></script>
+  <script src="cookie-import.js"></script>
+  <script src="dashboard.js"></script>
+  <script src="panel.js"></script>
+</body>
+</html>

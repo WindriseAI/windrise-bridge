@@ -1,0 +1,85 @@
+--- a/src/vendor/browseros/core/observer/observer.js	2026-10-27 00:00:00.000000000 +0800
++++ b/src/vendor/browseros/core/observer/observer.js	2026-10-27 00:00:00.000000000 +0800
+@@ -2,11 +2,13 @@
+ // 来源：BrowserOS（https://github.com/browseros-ai/BrowserOS）提交 512f9cc15962
+ //       packages/browseros-agent/packages/browser-core/src/core/observer/observer.ts
+ // 由 tools/vendor-browseros.mjs 从 TypeScript 转成 JavaScript，逻辑未改。不要直接改这个文件，重跑脚本会覆盖。
++// 例外：本文件已由 tools/vendor-patches/browseros/observer.js.patch 改写（光标扫描换成 src/core/snapshot-cursor.js
++// 的批量实现：进 shadow DOM、一次往返收候选、带合成提示名）。改行为请改那个 patch，重跑脚本会自动套上。
+ import { diffSnapshotObservations } from '../snapshot/diff.js';
+ import { RefMap } from '../snapshot/refs.js';
+ import { renderSnapshot } from '../snapshot/render.js';
+ import { fetchAxTree } from './ax-tree.js';
++import { scanCursorInFrame } from '../../../../core/snapshot-cursor.js';
+-import { findCursorHits } from './cursor-augment.js';
+ import { resolveRefEntry } from './resolve.js';
+ const MAX_FRAME_DEPTH = 5;
+ const MAX_STABLE_CAPTURE_ATTEMPTS = 3;
+@@ -49,19 +51,23 @@
+     }
+     async capture() {
+         const pageSession = await this.pages.getSession(this.pageId);
++        // 光标扫描的「专用会话」：默认就是页面会话；有 scanSessionFor 钩子时换成快照层给的窄会话
++        // （只放 Runtime / Page / DOM，不碰无障碍树）。同一个页面文档只扫一次，各框架共享结果。
++        const scanSession = this.scanSessionFor ? this.scanSessionFor() : pageSession.session;
++        const scan = await scanCursorInFrame(scanSession).catch(() => null);
+         for (let attempt = 0; attempt < MAX_STABLE_CAPTURE_ATTEMPTS; attempt++) {
+             const before = await this.readMainFrameState(pageSession.session);
+             const refs = this.refsForCapture(before);
++            const text = await this.captureFrame(undefined, refs, 0, new Set(), pageSession.session, before.frameDocuments, scan, scanSession);
+-            const text = await this.captureFrame(undefined, refs, 0, new Set(), pageSession.session, before.frameDocuments);
+             const after = await this.readMainFrameState(pageSession.session);
+             if (!knownMainFrameChanged(before, after)) {
++                return { text, refs, url: after.url, scope: refScopeFrom(after), documentId: before.documentId };
+-                return { text, refs, url: after.url, scope: refScopeFrom(after) };
+             }
+         }
+         throw new Error('Page document changed during snapshot capture; retry.');
+     }
+     /** Render a frame, then splice each child iframe's rendered tree under its `- iframe` line. */
++    async captureFrame(frameId, refs, baseDepth, visited, rootSession, frameDocuments, scan, scanSession) {
+-    async captureFrame(frameId, refs, baseDepth, visited, rootSession, frameDocuments) {
+         if (frameId !== undefined) {
+             if (visited.has(frameId))
+                 return '';
+@@ -69,6 +75,28 @@
+         }
+         const { session, axParams } = this.frames.resolveFrameTarget(this.pageId, frameId);
+         const nodes = await fetchAxTree(session, axParams);
++        // 光标扫描只能在**当前文档**里跑：主框架扫得到主文档和嵌在里面的同源 iframe 元素，
++        // 但跨域 iframe 的内部元素在它自己的文档里，必须换到那个框架的会话再跑一遍。
++        // 两份结果合成一张表交给 render：同一个元素只认一次（先到先得），编号不重复。
++        const cursorHits = new Map();
++        const shareHits = (scanResult) => {
++            if (!scanResult) return;
++            for (const [backendNodeId, hit] of scanResult.hits) {
++                if (!cursorHits.has(backendNodeId)) cursorHits.set(backendNodeId, hit);
++            }
++        };
++        if (scan) {
++            await scan.collect(session).catch(() => null);
++            shareHits(scan);
++        } else {
++            // 跨域 iframe：用它自己的会话重新扫一遍（主框架那次在同一棵文档树里，扫不到它）。
++            // 注意这里必须用子框架自己的 session，不能拿主框架的 scanSession —— 跨域文档不在它的执行上下文里。
++            const own = await scanCursorInFrame(session, { frameId: axParams?.frameId }).catch(() => null);
++            if (own) {
++                await own.collect(session).catch(() => null);
++                shareHits(own);
++            }
++        }
+         const documentId = await this.stableDocumentIdForFrame(rootSession, frameId, frameDocuments);
+         const { text, iframes } = renderSnapshot(nodes, {
+             refs,
+@@ -85,7 +113,10 @@
+             const childFrameId = await resolveChildFrameId(session, stitch.backendNodeId);
+             if (!childFrameId)
+                 continue;
++            // 子框架先把会话找出来，再决定用哪条会话扫：跨域 iframe 有子会话，同源 iframe 还是页面会话
++            const childTarget = this.frames.resolveFrameTarget(this.pageId, childFrameId);
++            const childScan = childTarget.session === session ? scan : null;
++            const childText = await this.captureFrame(childFrameId, refs, stitch.depth + 1, visited, rootSession, frameDocuments, childScan, scanSession).catch(() => '');
+-            const childText = await this.captureFrame(childFrameId, refs, stitch.depth + 1, visited, rootSession, frameDocuments).catch(() => '');
+             if (childText)
+                 lines.splice(stitch.lineIndex + 1, 0, childText);
+         }

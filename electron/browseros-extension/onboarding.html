@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Windrise 初次设置</title>
+  <link rel="stylesheet" href="dashboard.css">
+</head>
+<body>
+  <div class="onb-wrap">
+    <header class="onb-top">
+      <div class="brand">Windrise 初次设置</div>
+      <button type="button" class="onb-skip" id="btn-skip">跳过，以后在侧边栏里设置</button>
+    </header>
+
+    <nav class="onb-steps" id="step-bar" aria-label="步骤"></nav>
+
+    <main class="onb-body">
+
+      <section class="card" data-step="1">
+        <h2>欢迎，30 秒看懂 Windrise</h2>
+        <p><b>能干什么：</b>云端 AI（Claude、ChatGPT 等）远程指挥<b>这个浏览器和这台电脑</b>——替你查资料、填表、登录后继续干活、在网页里点按钮，全靠 Windrise 给电脑开的这条「MCP + 隧道」通道。</p>
+        <p><b>不能干什么：</b>它不会凭空知道你的一切——只在你<b>主动打通隧道</b>时，外部 AI 才连得进来；断开隧道，连接立刻失效。登录页（密码、验证码）只有你本人能操作，AI 进不去。</p>
+        <p><b>隐私说明：</b>AI 确实能操作这台电脑（浏览器页面、你允许的文件夹、命令），<b>所有操作都有记录</b>（侧边栏「最近 AI 操作」）。口令相当于钥匙，别发给不信任的 AI；发现不对劲，撤销口令或断开隧道即可。</p>
+      </section>
+
+      <section class="card" data-step="2" hidden>
+        <h2>打通隧道：给电脑一个公网地址</h2>
+        <p>云端 AI 找不到你家电脑。隧道给它一个 https:// 地址，指令顺着隧道进来，结果原路回去。<b>三种方式都需要激活</b>（浏览器本身和本机 MCP 免费）：</p>
+        <ul>
+          <li><b>临时随机地址</b>（Cloudflare 快速隧道）：最省事，不用注册；每次重连地址会变。</li>
+          <li><b>自己的域名</b>（Cloudflare 命名隧道）：地址永远不变，推荐长期用。<a href="#" id="link-domain-guide">看自有域名教程</a>（要一个域名 + 免费把 DNS 托管到 Cloudflare）。</li>
+          <li><b>ngrok</b>：免费账号送一个固定域名，不用自己买域名。</li>
+        </ul>
+        <div class="kv"><span>激活状态</span><b id="onb-license">读取中…</b></div>
+        <div class="row" id="row-activate" hidden>
+          <button type="button" class="primary" id="btn-activate">输入激活码</button>
+        </div>
+        <div class="row" id="row-buy" hidden>
+          <button type="button" class="primary" id="btn-buy-D" disabled>天卡 · 读取中…</button>
+          <button type="button" class="primary" id="btn-buy-M" disabled>月卡 · 读取中…</button>
+          <button type="button" class="primary" id="btn-buy-Y" disabled>年卡 · 读取中…</button>
+        </div>
+        <div class="pay-box" id="onb-pay-box" hidden>
+          <div class="kv"><span>订单</span><b id="onb-pay-order">—</b></div>
+          <div class="kv"><span>状态</span><b id="onb-pay-status">—</b></div>
+          <div id="onb-pay-qr-wrap" hidden>
+            <img id="onb-pay-qr" class="pay-qr" alt="支付宝二维码" />
+            <div class="hint">用支付宝扫这个二维码付款，付完不用关页面，状态会自动更新。</div>
+          </div>
+        </div>
+        <div class="row" id="row-connect" hidden>
+          <button type="button" class="primary" id="btn-tunnel-connect">打通隧道</button>
+          <div class="hint" id="hint-connect">点一下即可；状态会在这页和侧边栏里更新。</div>
+        </div>
+        <div class="hint" id="hint-step2"></div>
+      </section>
+
+      <section class="card" data-step="3" hidden>
+        <h2>连 AI：地址 + 口令</h2>
+        <p>AI 客户端连这个<b>公网 MCP 地址</b>（地址里不带任何口令），在请求头里写 <b>Authorization: Bearer 你的口令</b>。</p>
+        <div class="onb-section-title">公网 MCP 地址（还没打通隧道？先回第 2 步）</div>
+        <div class="codebox" id="onb-public-url">—</div>
+        <div class="row">
+          <button type="button" id="btn-copy-url" disabled>复制地址</button>
+        </div>
+        <div class="onb-section-title">请求头写法</div>
+        <div class="codebox" id="onb-auth-header">Authorization: Bearer &lt;你的口令&gt;</div>
+        <div class="row">
+          <button type="button" id="btn-copy-header">复制请求头写法</button>
+          <button type="button" class="primary" id="btn-new-key">生成一把新口令</button>
+        </div>
+        <div class="keybox" id="onb-key-box" hidden>
+          <div class="ok-text">这是你的新口令，<b>只显示这一次，请复制保存</b>（发给 AI 时填在请求头里）：</div>
+          <div id="onb-key-text"></div>
+          <div class="row">
+            <button type="button" id="btn-copy-key">复制这把口令</button>
+          </div>
+        </div>
+        <div class="onb-section-title">按客户端填</div>
+        <div class="onb-tabs" id="client-tabs" role="tablist"></div>
+        <div class="card" id="client-detail"></div>
+        <div class="hint" id="hint-step3"></div>
+      </section>
+
+      <section class="card" data-step="4" hidden>
+        <h2>工具：隧道里已经带全了</h2>
+        <p>不用另装浏览器 MCP：打通隧道后，格子、空间、钉住、页面读写点、截图、布局这些<b>浏览器控制工具已经在里面了</b>，AI 拿到地址就能用。</p>
+        <div class="onb-section-title">选工具档位</div>
+        <div class="tier-row">
+          <button type="button" class="tier-btn" id="tier-basic">基础</button>
+          <button type="button" class="tier-btn" id="tier-full">完整</button>
+        </div>
+        <div class="hint">基础档：基本功能 + 浏览器操作 + 鼠标兜底，给别人用更清爽；完整档：含你私人接入的外接工具。改完重启 Bridge（设置页有按钮）后生效。</div>
+        <div class="onb-section-title">隧道里带哪些工具</div>
+        <div id="tool-list"></div>
+        <div class="onb-section-title">管理员代理（可选）</div>
+        <div class="kv"><span>状态</span><b id="onb-broker">读取中…</b></div>
+        <div class="row" id="row-broker" hidden>
+          <button type="button" id="btn-broker-install">安装（会弹一次 Windows 权限确认）</button>
+        </div>
+        <div class="hint" id="hint-step4"></div>
+      </section>
+
+      <section class="card" data-step="5" hidden>
+        <h2>共享上下文与记忆</h2>
+        <div class="onb-section-title">本地共享文件夹</div>
+        <p>各格子的 AI 共享记忆和会话记录放在本机这个文件夹里（<b>默认开启</b>，数据不出这台电脑）：</p>
+        <div class="codebox" id="onb-context-dir">—</div>
+        <div class="onb-section-title">MemOS 云端记忆（可选）</div>
+        <p>想让 AI 跨设备长期记忆，可以接 MemOS：去 MemOS 官网注册并拿到自己的 API Key，在 Windrise 设置里粘贴即可（引导页不接密钥，在设置窗口里填）。Key 是你自己的，Windrise 只存本机。</p>
+        <div class="kv"><span>MemOS</span><b id="onb-memos">读取中…</b></div>
+        <div class="row" id="row-memos" hidden>
+          <button type="button" id="btn-memos-config">去设置窗口的「共享上下文」页填写</button>
+        </div>
+        <div class="hint" id="hint-step5"></div>
+      </section>
+
+      <section class="card" data-step="6" hidden>
+        <h2>多 AI 协作技能</h2>
+        <p>以后这里会内置一份我们实测过的「多 agent 协作」技能：让一个 AI 当总调度，把活拆给电脑上的 Claude Code、Codex 等一起干，带开关、可自己改。</p>
+        <div class="hint">状态：<b>即将推出</b>。现在可以先用第 3 步的口令让多个 AI 各自连上，手动分工。</div>
+        <div class="hint" id="hint-step6"></div>
+      </section>
+
+      <section class="card" data-step="7" hidden>
+        <h2>导入</h2>
+        <div class="onb-section-title">书签 / 历史</div>
+        <p>从你原来的浏览器导入书签和历史：浏览器自带导入页。</p>
+        <div class="row">
+          <button type="button" id="btn-import-page">试着直接打开导入页</button>
+          <button type="button" id="btn-copy-import-url">复制导入页地址</button>
+        </div>
+        <div class="hint" id="hint-import">如果浏览器不让插件直接打开，请在新标签页的地址栏粘贴 <code>chrome://settings/importData</code> 回车。</div>
+        <div class="onb-section-title">Cookie（登录态）</div>
+        <p>只支持<b>你本人</b>用原浏览器装 Cookie 导出插件、导出的文件（<code>cookies.txt</code> 或 JSON）。在侧边栏里选文件，先预览条数和涉及的网站，确认后才写入。文件只在本地读，不上传；不破解 Chrome 的加密、也不碰你的明文密码。</p>
+        <p>导入会写进<b>当前这个格子</b>（当前浏览器 = 当前账号），其他格子不受影响。</p>
+        <div class="hint">去侧边栏导入：点浏览器右上角的 Windrise 图标打开侧边栏，找到「导入 Cookie」，选文件 → 预览 → 确认。</div>
+        <div class="hint" id="hint-step7"></div>
+      </section>
+
+      <section class="card" data-step="8" hidden>
+        <h2>完成！</h2>
+        <p>Windrise 已经准备好了：格子里浏览，侧边栏管设置，AI 走隧道进来干活。</p>
+        <a class="recommend-link" id="onb-recommend" rel="noopener noreferrer" target="_blank">
+          <span class="recommend-title" id="onb-recommend-title">推荐</span>
+          <span class="recommend-desc" id="onb-recommend-desc"></span>
+        </a>
+        <div class="row">
+          <button type="button" class="primary" id="btn-start">开始使用</button>
+        </div>
+        <div class="hint" id="hint-step8"></div>
+      </section>
+
+    </main>
+
+    <footer class="onb-nav">
+      <button type="button" id="btn-prev">上一步</button>
+      <span class="hint" id="onb-hint"></span>
+      <button type="button" id="btn-next" class="primary">下一步</button>
+    </footer>
+  </div>
+  <script src="dashboard.js"></script>
+  <script src="onboarding.js"></script>
+</body>
+</html>

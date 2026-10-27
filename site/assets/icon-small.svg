@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="1024" height="1024">
+  <title>Windrise Bridge（小尺寸）</title>
+  <!-- 16–32 像素专用：去掉光影和玻璃，只留白色剪影：天上的云风筝、一根线、地上的显示器 -->
+  <rect width="32" height="32" rx="7.5" fill="#3d97e8"/>
+  <g fill="#fff" transform="rotate(-9 21 10)"><circle cx="17" cy="10" r="3.6"/><circle cx="21.5" cy="7.6" r="4.6"/><circle cx="26" cy="10.2" r="3.2"/><rect x="13.5" y="10" width="16" height="4.4" rx="2.2"/></g>
+  <path d="M22 14.6 C21.4 19.2 14.6 17.8 11 20.6" fill="none" stroke="#fff" stroke-width="1.7" stroke-linecap="round"/>
+  <rect x="4" y="20.4" width="13" height="8.4" rx="2" fill="#fff"/>
+  <rect x="5.6" y="22" width="9.8" height="5.2" rx="1" fill="#3d97e8" opacity=".35"/>
+</svg>

@@ -1,0 +1,92 @@
+{
+  "upstream": "https://github.com/browseros-ai/BrowserOS",
+  "commit": "512f9cc15962b00b65b2cb35c429ed3134764f84",
+  "license": "AGPL-3.0",
+  "note": "上游 README 只写 AGPL-3.0（package.json 写 or-later），按 AGPL-3.0 标注。本仓库整体是 AGPL-3.0-or-later，两者兼容。",
+  "patched": "tools/vendor-patches/browseros/*.patch 由 tools/vendor-browseros.mjs 在转换后自动打上；改行为请改补丁，不要改 vendor 文件。",
+  "patches": [
+    {
+      "file": "src/vendor/browseros/core/observer/observer.js",
+      "hunks": 2
+    },
+    {
+      "file": "src/vendor/browseros/core/snapshot/render.js",
+      "hunks": 6
+    },
+    {
+      "file": "src/vendor/browseros/core/observer/resolve.js",
+      "hunks": 2
+    }
+  ],
+  "vendoredAt": "2026-10-23",
+  "files": [
+    {
+      "upstream": "packages/browseros-agent/packages/browser-core/src/core/snapshot/ax-types.ts",
+      "local": "src/vendor/browseros/core/snapshot/ax-types.js"
+    },
+    {
+      "upstream": "packages/browseros-agent/packages/browser-core/src/core/snapshot/roles.ts",
+      "local": "src/vendor/browseros/core/snapshot/roles.js"
+    },
+    {
+      "upstream": "packages/browseros-agent/packages/browser-core/src/core/snapshot/refs.ts",
+      "local": "src/vendor/browseros/core/snapshot/refs.js"
+    },
+    {
+      "upstream": "packages/browseros-agent/packages/browser-core/src/core/snapshot/render.ts",
+      "local": "src/vendor/browseros/core/snapshot/render.js"
+    },
+    {
+      "upstream": "packages/browseros-agent/packages/browser-core/src/core/snapshot/diff.ts",
+      "local": "src/vendor/browseros/core/snapshot/diff.js"
+    },
+    {
+      "upstream": "packages/browseros-agent/packages/browser-core/src/core/snapshot/refs.test.ts",
+      "local": "src/vendor/browseros/core/snapshot/refs.test.js"
+    },
+    {
+      "upstream": "packages/browseros-agent/packages/browser-core/src/core/snapshot/render.test.ts",
+      "local": "src/vendor/browseros/core/snapshot/render.test.js"
+    },
+    {
+      "upstream": "packages/browseros-agent/packages/browser-core/src/core/snapshot/diff.test.ts",
+      "local": "src/vendor/browseros/core/snapshot/diff.test.js"
+    },
+    {
+      "upstream": "packages/browseros-agent/packages/browser-core/src/core/observer/ax-tree.ts",
+      "local": "src/vendor/browseros/core/observer/ax-tree.js"
+    },
+    {
+      "upstream": "packages/browseros-agent/packages/browser-core/src/core/observer/frames.ts",
+      "local": "src/vendor/browseros/core/observer/frames.js"
+    },
+    {
+      "upstream": "packages/browseros-agent/packages/browser-core/src/core/observer/resolve.ts",
+      "local": "src/vendor/browseros/core/observer/resolve.js"
+    },
+    {
+      "upstream": "packages/browseros-agent/packages/browser-core/src/core/observer/observer.ts",
+      "local": "src/vendor/browseros/core/observer/observer.js"
+    },
+    {
+      "upstream": "packages/browseros-agent/packages/browser-core/src/core/observer/resolve.test.ts",
+      "local": "src/vendor/browseros/core/observer/resolve.test.js"
+    },
+    {
+      "upstream": "packages/browseros-agent/packages/browser-core/src/core/observer/observer.test.ts",
+      "local": "src/vendor/browseros/core/observer/observer.test.js"
+    },
+    {
+      "upstream": "packages/browseros-agent/packages/browser-core/src/content-markdown.ts",
+      "local": "src/vendor/browseros/content-markdown.js"
+    },
+    {
+      "upstream": "packages/browseros-agent/packages/browser-mcp/src/tools/token-estimate.ts",
+      "local": "src/vendor/browseros/mcp/tools/token-estimate.js"
+    },
+    {
+      "upstream": "packages/browseros-agent/packages/browser-mcp/src/tools/trust-boundary.ts",
+      "local": "src/vendor/browseros/mcp/tools/trust-boundary.js"
+    }
+  ]
+}

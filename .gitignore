@@ -1,0 +1,46 @@
+# 运行数据（登录态、令牌、激活信息）
+data/
+build/seed/
+
+# 依赖与构建产物
+node_modules/
+dist/
+_release-tmp/
+build/bin/
+# 浏览器安装包（Chromium mini_installer，约 160 MB）：只进 NSIS 安装包，不进仓库
+build/browser/
+
+# 改代码前的备份（里面有旧版代码和预置凭据）
+_backup/
+
+# 密钥、口令、激活码、数据库：绝不进仓库
+**/*.pem
+**/*.key
+**/.env*
+**/*.p12
+**/*.pfx
+server/codes/
+server/data/
+server/keys/
+**/*.csv
+**/*.sqlite
+**/*.sqlite3
+**/*.db
+
+# 探针运行产物
+_probe/video-lab/
+
+# 2026-10-25 建本地仓库时补的
+data.safe-shell-*/
+data.*/
+_probe/swap-*/
+_probe/**/*.bin
+*.bak-*
+**/owner-auth.json*
+**/route-token.json*
+_smoke/*.json
+_smoke/*.txt
+_smoke/*.log
+
+# 本地临时目录（测试用 BRIDGE_DATA_HOME 等往这里写）
+.tmp/

@@ -1,0 +1,30 @@
+# 在 GitHub 的 Mac 机器上打 macOS 安装包（Windows 电脑打不了 Mac 包）。
+# 用法：把仓库推到 GitHub → Actions → Build macOS → Run workflow，跑完在页面底部下载 dmg。
+# 有 Apple 开发者证书时，在仓库 Settings → Secrets 里加上下面几个，就会自动签名 + 公证（用户双击直接能开）：
+#   CSC_LINK（.p12 证书 base64）、CSC_KEY_PASSWORD、APPLE_ID、APPLE_APP_SPECIFIC_PASSWORD、APPLE_TEAM_ID
+name: Build macOS
+on:
+  workflow_dispatch:
+jobs:
+  mac:
+    runs-on: macos-14
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: npm ci || npm install
+      - run: node scripts/build.mjs --mac
+        env:
+          CSC_LINK: ${{ secrets.CSC_LINK }}
+          CSC_KEY_PASSWORD: ${{ secrets.CSC_KEY_PASSWORD }}
+          APPLE_ID: ${{ secrets.APPLE_ID }}
+          APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+          CSC_IDENTITY_AUTO_DISCOVERY: ${{ secrets.CSC_LINK != '' }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: windrise-bridge-mac
+          path: |
+            dist/*.dmg
+            dist/*.zip

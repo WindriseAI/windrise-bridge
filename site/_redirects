@@ -1,0 +1,4 @@
+# 旧官网的图片地址，别处可能还引用着（分享卡片缓存等），转到新图
+/assets/og.jpg        /assets/og.png         301
+/assets/logo.png      /assets/icon-512.png   301
+/assets/favicon.png   /assets/favicon-32.png 301

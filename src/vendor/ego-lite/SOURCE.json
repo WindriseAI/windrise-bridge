@@ -1,0 +1,54 @@
+{
+  "upstream": "https://github.com/citrolabs/ego-lite",
+  "commit": "d392204d1ea1a8027a591ab2b0129c2e11d85f26",
+  "license": "MIT",
+  "note": "ego-shims.js 是手写适配层（CDP 走 webContents.debugger），不由本脚本生成或覆盖。",
+  "vendoredAt": "2026-10-24",
+  "files": [
+    {
+      "upstream": "package/ego-browser/src/driver/page-actions.ts",
+      "local": "driver/page-actions.js",
+      "sha256": "1c9826434e79f94b5bce94086e7bd8eebfd7070657f5fa685806e3bc58cfc38d"
+    },
+    {
+      "upstream": "package/ego-browser/src/driver/action-target.ts",
+      "local": "driver/action-target.js",
+      "sha256": "d912036636300c9c5baee823dd90f18595cde42d7268694f70a780ea58184da4"
+    },
+    {
+      "upstream": "package/ego-browser/src/driver/scroll-motion.ts",
+      "local": "driver/scroll-motion.js",
+      "sha256": "f349254fcf7a3a9f5462793f0227214e33bde4019c4d3ca6bf587df7b93253da"
+    },
+    {
+      "upstream": "package/ego-browser/src/driver/keyboard.ts",
+      "local": "driver/keyboard.js",
+      "sha256": "e775c049a57b1b014d54b3b5f904c8138e97f6215a549f3fba8ef964ed57d379"
+    },
+    {
+      "upstream": "package/ego-browser/src/ref-map.ts",
+      "local": "ref-map.js",
+      "sha256": "2f21d7299796e4700de996848d7a1905e1967dbc3eea87d6f1dca21ffff3fd81"
+    },
+    {
+      "upstream": "package/ego-browser/src/driver/action-target.test.mjs",
+      "local": "driver/action-target.test.js",
+      "sha256": "96a85d6bc794a70d67056c0e1a053b7d165f33bc04bc9a88f5951ce264542bf0"
+    },
+    {
+      "upstream": "package/ego-browser/src/driver/scroll-motion.test.mjs",
+      "local": "driver/scroll-motion.test.js",
+      "sha256": "aac29f66bda272be804b5ccb262d8ad56c047716b316633ff28a8073625b4c3d"
+    },
+    {
+      "upstream": "package/ego-browser/src/ref-map.test.mjs",
+      "local": "ref-map.test.js",
+      "sha256": "b0d9c7edf2dceffd92a456badfad31211adfa97da611363a0a01089582ad8150"
+    },
+    {
+      "upstream": "LICENSE",
+      "local": "LICENSE",
+      "sha256": "e5715cb0fc3f51d5db967b9c68983a0c32ff877d4382fa8cdda47dcf3d73b117"
+    }
+  ]
+}

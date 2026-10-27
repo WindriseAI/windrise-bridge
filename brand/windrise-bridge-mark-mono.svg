@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240" width="1024" height="1024">
+  <title>Windrise Bridge 单色标记</title>
+  <!-- 单色版：没有底板，屏幕是镂空的，深浅背景都能用。默认深墨蓝，换色改 fill / stroke 即可 -->
+  <g fill="#0f2a44" stroke="#0f2a44">
+    <g stroke="none" transform="rotate(-9 160 72)"><circle cx="130" cy="76" r="24"/><circle cx="161" cy="57" r="33"/><circle cx="192" cy="77" r="22"/><rect x="103" y="74" width="113" height="31" rx="15.5"/></g>
+    <path d="M166 106 C162 146 98 130 78 150" fill="none" stroke-width="6" stroke-linecap="round"/>
+    <path d="M204 96 C214 108 204 118 214 130 C222 140 214 152 222 164" fill="none" stroke-width="4" stroke-linecap="round"/>
+    <path stroke="none" fill-rule="evenodd" d="M50 150 H106 A10 10 0 0 1 116 160 V192 A10 10 0 0 1 106 202 H50 A10 10 0 0 1 40 192 V160 A10 10 0 0 1 50 150 Z M53 158 H103 A5 5 0 0 1 108 163 V189 A5 5 0 0 1 103 194 H53 A5 5 0 0 1 48 189 V163 A5 5 0 0 1 53 158 Z"/>
+    <path d="M68 202 H88 L93 212 H63 Z" stroke="none"/>
+  </g>
+</svg>

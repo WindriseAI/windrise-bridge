@@ -1,0 +1,4 @@
+{
+  "_说明": "apiBase 现在是激活服务器 + 自动更新接口共用的地址：激活（客户端 src/core/activation.js）和更新模块都读这里的 apiBase。许可证公钥写死在程序里（activation.js / main.cjs / bridge.js / tunnel.js 各一份），不读这里。开发时同时设 BRIDGE_DEV=1 和 BRIDGE_API_BASE 才能指向本机测试服务器。",
+  "apiBase": "https://api.secrethq.shop"
+}

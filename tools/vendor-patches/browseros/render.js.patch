@@ -1,0 +1,264 @@
+diff --git a/src/vendor/browseros/core/snapshot/render.js b/src/vendor/browseros/core/snapshot/render.js
+index 2423468..89a3c85 100644
+--- a/src/vendor/browseros/core/snapshot/render.js
++++ b/src/vendor/browseros/core/snapshot/render.js
+@@ -2,8 +2,18 @@
+ // 来源：BrowserOS（https://github.com/browseros-ai/BrowserOS）提交 512f9cc15962
+ //       packages/browseros-agent/packages/browser-core/src/core/snapshot/render.ts
+ // 由 tools/vendor-browseros.mjs 从 TypeScript 转成 JavaScript，逻辑未改。不要直接改这个文件，重跑脚本会覆盖。
++// 例外：本文件已由 tools/vendor-patches/browseros/render.js.patch 改写（被忽略的 AX 节点靠光标扫描救回、
++// 无名字的可点元素给合成提示名、隐藏的 file input 标出来、勾选状态两头都写、下拉框当前值写成 [value=…]）。
++// 改行为请改那个 patch，重跑脚本会自动套上。
+ import { INTERACTIVE_ROLES, ROOT_ROLES, SKIP_ROLES, VALUE_ROLES } from './roles.js';
+ const IFRAME_ROLES = new Set(['Iframe', 'iframe']);
++/** 光标扫描能给出的角色：被忽略的节点没有语义角色，用命中的种类顶上。 */
++const PROMOTED_ROLES = new Set(['clickable', 'image', 'icon', 'file-input']);
++/**
++ * 下拉框类角色：当前值写成 `[value="…"]`（和 [checked] 一样是状态位），而不是行尾的 `: "…"`。
++ * listbox（多选 select）本来不在 VALUE_ROLES 里，这一条让它也能报出当前选中的值。
++ */
++const SELECT_STATE_ROLES = new Set(['combobox', 'listbox']);
+ /** Renders a CDP accessibility tree into the canonical agent-facing snapshot. */
+ export function renderSnapshot(nodes, opts) {
+     const byId = new Map();
+@@ -12,14 +22,24 @@ export function renderSnapshot(nodes, opts) {
+     const base = opts.baseDepth ?? 0;
+     const lines = [];
+     const iframes = [];
++    const emitted = new Set();
++    const inTree = new Set();
++    // 用了合成提示名的行：整份快照渲染完才知道谁重名，那时再补区分文字
++    const hintMarks = [];
++    for (const node of nodes) {
++        if (node.backendDOMNodeId !== undefined)
++            inTree.add(node.backendDOMNodeId);
++    }
+     const visit = (nodeId, depth) => {
+         const node = byId.get(nodeId);
+         if (!node)
+             return;
+-        const role = node.ignored ? undefined : strVal(node.role);
++        const hit = cursorHitOf(node, opts);
+         const name = strVal(node.name);
+-        const isCursorHit = node.backendDOMNodeId !== undefined &&
+-            (opts.cursorHits?.has(node.backendDOMNodeId) ?? false);
++        // 被无障碍树忽略的节点（没语义的 div / span / img 包装层）只要光标扫描命中，就用命中的种类当角色；
++        // 无名 generic / group 也一样 —— 「- generic [ref=e5]」看不出能不能点，写成 clickable 才说得清。
++        const role = promoteRole(node.ignored ? undefined : strVal(node.role), name, hit);
++        const isCursorHit = hit !== undefined;
+         if (isDropped(role, name, isCursorHit)) {
+             for (const childId of node.childIds ?? [])
+                 visit(childId, depth);
+@@ -31,6 +51,7 @@ export function renderSnapshot(nodes, opts) {
+                 line += ` ${JSON.stringify(name)}`;
+             lines.push(line);
+             if (node.backendDOMNodeId !== undefined) {
++                emitted.add(node.backendDOMNodeId);
+                 iframes.push({
+                     backendNodeId: node.backendDOMNodeId,
+                     lineIndex: lines.length - 1,
+@@ -39,12 +60,28 @@ export function renderSnapshot(nodes, opts) {
+             }
+             return;
+         }
+-        lines.push(formatLine(node, role, name, base + depth, opts));
++        const lineIndex = lines.length;
++        lines.push(formatLine(node, role, name, base + depth, opts, hit));
++        noteHint(hintMarks, lineIndex, hit, name);
++        if (node.backendDOMNodeId !== undefined)
++            emitted.add(node.backendDOMNodeId);
+         for (const childId of node.childIds ?? [])
+             visit(childId, depth + 1);
+     };
+     for (const rootId of entryNodeIds(nodes))
+         visit(rootId, 0);
++    // 无障碍树里根本没有节点的命中：隐藏的 file input（display:none 时不进树）、aria-hidden 子树里的东西。
++    // 它们没有可挂的父级，统一追加在最后；编号照样发，AI 至少知道页面上有这个元素。
++    // 树里有节点但被上面丢掉的（例如父级也是 pointer 的装饰层）不在这里补，装饰过滤照旧生效。
++    for (const [backendNodeId, raw] of opts.cursorHits ?? []) {
++        if (inTree.has(backendNodeId) || emitted.has(backendNodeId))
++            continue;
++        const hit = Array.isArray(raw) ? { reasons: raw } : raw;
++        const lineIndex = lines.length;
++        lines.push(formatLine({ backendDOMNodeId: backendNodeId, properties: [] }, hit.kind ?? 'clickable', '', base, opts, hit));
++        noteHint(hintMarks, lineIndex, hit, '');
++    }
++    applyHintContexts(lines, hintMarks);
+     return { text: lines.join('\n'), iframes };
+ }
+ /** Where to begin the walk: document roots if present, else the first node. */
+@@ -67,16 +104,43 @@ function isDropped(role, name, isCursorHit) {
+     }
+     return false;
+ }
+-function formatLine(node, role, name, depth, opts) {
++/** 光标扫描的命中：老调用方只给 reasons 数组，新扫描器给 { reasons, hint, kind, hidden, fileInput }。 */
++function cursorHitOf(node, opts) {
++    const backendNodeId = node.backendDOMNodeId;
++    if (backendNodeId === undefined)
++        return undefined;
++    const raw = opts.cursorHits?.get(backendNodeId);
++    if (raw === undefined)
++        return undefined;
++    return Array.isArray(raw) ? { reasons: raw } : raw;
++}
++/**
++ * 无名节点被光标命中时换用扫描给出的种类：
++ *   - 没有角色（被无障碍树忽略）→ 一定换，否则整行会被丢掉；
++ *   - generic / group / none / presentation 且没有无障碍名 → 也换，
++ *     `- generic [ref=e5]` 和 `- none [ref=e5]` 对 AI 都没有信息量（隐藏的 file input 常被算成 none）。
++ * 有真名的节点保留原角色，名字照旧在引号里。
++ */
++function promoteRole(role, name, hit) {
++    if (!hit || !hit.kind)
++        return role;
++    if (!role)
++        return hit.kind;
++    if (!name && (role === 'generic' || role === 'group' || role === 'none' || role === 'presentation'))
++        return hit.kind;
++    return role;
++}
++function formatLine(node, role, name, depth, opts, hit) {
+     let line = `${'  '.repeat(depth)}- ${role}`;
+     if (name)
+         line += ` ${JSON.stringify(name)}`;
+     for (const state of formatStates(node))
+         line += ` [${state}]`;
+     const backendNodeId = node.backendDOMNodeId;
+-    const cursorReasons = backendNodeId !== undefined
+-        ? opts.cursorHits?.get(backendNodeId)
+-        : undefined;
++    const cursorReasons = hit?.reasons;
++    // 编号只发给「本来就是可交互角色」或者「光标扫描命中」的节点。
++    // 不能把 PROMOTED_ROLES 也放进来：promoted 角色只会在有命中时出现，而 image / icon 本身是
++    // 常见的真实 AX 角色，放进来会让页面上每个 <img> 都白拿一个编号（真机踩过：多出几十行 `- image [ref=eN]`）。
+     const actionable = backendNodeId !== undefined &&
+         (INTERACTIVE_ROLES.has(role) || cursorReasons !== undefined);
+     if (actionable) {
+@@ -89,42 +153,118 @@ function formatLine(node, role, name, depth, opts) {
+         });
+         line += ` [ref=${ref}]`;
+     }
+-    if (cursorReasons !== undefined)
++    // 隐藏的上传框不是「光标命中」，标 [cursor=pointer] 会误导（它点不动），只标 [hidden]
++    if (cursorReasons !== undefined && !hit?.fileInput)
+         line += ' [cursor=pointer]';
+-    if (VALUE_ROLES.has(role)) {
++    if (hit?.hidden)
++        line += ' [hidden]';
++    // 合成名只在「自己没有无障碍名」时补，真实名字照旧放在引号里，两者一眼能分开
++    if (hit?.hint && !name)
++        line += ` (提示: ${hit.hint})`;
++    // 下拉框（原生 select / 自定义 combobox）的当前值放进方括号里，和 [checked] 一类状态并排：
++    // 以前只有 textbox 那几种角色会把 value 写在行尾的 `: "…"`，combobox 有值时 AI 也看不到，
++    // 只能再调一次 page_read / evaluate 才能确认选中的是哪一项。
++    if (SELECT_STATE_ROLES.has(role)) {
++        const value = strVal(node.value);
++        if (value)
++            line += ` [value=${JSON.stringify(value)}]`;
++    }
++    if (VALUE_ROLES.has(role) && !SELECT_STATE_ROLES.has(role)) {
+         const value = strVal(node.value);
+         if (value)
+             line += `: ${JSON.stringify(value)}`;
+     }
+     return line;
+ }
++/** 这一行用了合成提示名就记一笔：同一份快照里重名时，整份渲染完再补区分文字。 */
++function noteHint(marks, lineIndex, hit, name) {
++    if (!hit?.hint || name)
++        return;
++    marks.push({
++        lineIndex,
++        hint: hit.hint,
++        context: typeof hit.context === 'string' ? hit.context : '',
++    });
++}
++/**
++ * 重名提示名补区分文字（抖音的两张封面卡片都叫「选择封面」，AI 分不清点哪张）：
++ * 优先用扫描时取到的旁边短文本 → 「(提示: 选择封面 · 竖封面3:4)」；
++ * 取不到、或者几个元素的文字互相重复，就按在本组里的出现顺序写「第 N 个」。
++ * 只有重名的才动，唯一的提示名逐字不变（向后兼容）。
++ */
++function applyHintContexts(lines, marks) {
++    const groups = new Map();
++    for (const mark of marks) {
++        const group = groups.get(mark.hint);
++        if (group)
++            group.push(mark);
++        else
++            groups.set(mark.hint, [mark]);
++    }
++    for (const [hint, group] of groups) {
++        if (group.length < 2)
++            continue;
++        // 只在组内都唯一的文字才算区分得开
++        const occurrences = new Map();
++        for (const mark of group) {
++            if (!mark.context)
++                continue;
++            occurrences.set(mark.context, (occurrences.get(mark.context) ?? 0) + 1);
++        }
++        group.forEach((mark, index) => {
++            const distinct = mark.context && occurrences.get(mark.context) === 1
++                ? mark.context
++                : `第 ${index + 1} 个`;
++            const segment = ` (提示: ${hint})`;
++            const line = lines[mark.lineIndex];
++            const at = line.lastIndexOf(segment);
++            if (at < 0)
++                return;
++            lines[mark.lineIndex] = `${line.slice(0, at)} (提示: ${hint} · ${distinct})${line.slice(at + segment.length)}`;
++        });
++    }
++}
++/**
++ * CDP 的布尔类 AX 属性是 tristate：真浏览器给字符串 "true" / "false"（checked 还有 "mixed"），
++ * 单测的假树给布尔值。两种形状都要认，否则真机上状态位一个都出不来。
++ */
++function isTrue(v) {
++    return v === true || v === 'true';
++}
++function isFalse(v) {
++    return v === false || v === 'false';
++}
+ function formatStates(node) {
+     const states = [];
+     for (const prop of node.properties ?? []) {
+         const v = prop.value.value;
+         switch (prop.name) {
+             case 'checked':
+-                if (v === true)
++                // 勾选状态要两头都写出来：只写 [checked] 时 AI 分不清「没勾」和「这个控件没有勾选语义」，
++                // 而 checkbox / radio / switch 在 AX 树里永远带 checked 属性（false 也要报）。
++                if (isTrue(v))
+                     states.push('checked');
++                else if (isFalse(v))
++                    states.push('unchecked');
+                 else if (v === 'mixed')
+                     states.push('indeterminate');
+                 break;
+             case 'disabled':
+-                if (v === true)
++                if (isTrue(v))
+                     states.push('disabled');
+                 break;
+             case 'expanded':
+-                if (v === true)
++                if (isTrue(v))
+                     states.push('expanded');
+-                else if (v === false)
++                else if (isFalse(v))
+                     states.push('collapsed');
+                 break;
+             case 'required':
+-                if (v === true)
++                if (isTrue(v))
+                     states.push('required');
+                 break;
+             case 'selected':
+-                if (v === true)
++                if (isTrue(v))
+                     states.push('selected');
+                 break;
+             case 'level':

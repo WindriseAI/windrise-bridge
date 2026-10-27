@@ -1,0 +1,35 @@
+{
+  "name": "bridge-replica",
+  "version": "0.1.0",
+  "private": true,
+  "license": "AGPL-3.0-or-later",
+  "description": "本地 MCP 桥：隧道 + 工作区 + 多账号多开浏览器 + 语言服务",
+  "main": "electron/main.cjs",
+  "scripts": {
+    "start": "node src/standalone.js",
+    "tools": "node src/standalone.js --list-tools",
+    "selftest": "node src/standalone.js --self-test",
+    "capability": "node src/capability-demo.mjs",
+    "lsp": "node src/lsp-selftest.mjs",
+    "license": "node src/license-selftest.mjs",
+    "context": "node src/context-bus-selftest.mjs",
+    "external": "node src/external-mcp-selftest.mjs",
+    "tunnel": "node src/standalone.js --tunnel",
+    "check:clickable": "node tools/run-clickable-tests.mjs",
+    "check:vendor": "node tools/run-vendor-tests.mjs",
+    "ui": "electron .",
+    "ui:eval": "electron . --allow-eval",
+    "ui:debug": "electron --remote-debugging-port=9223 .",
+    "dist": "node scripts/build.mjs",
+    "dist:dir": "node scripts/build.mjs --dir",
+    "verify:packaged": "pwsh -NoProfile -File scripts/verify-packaged.ps1"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.29.0",
+    "typescript": "^5.9.3",
+    "zod": "^3.25.76"
+  },
+  "devDependencies": {
+    "electron": "^45.0.0"
+  }
+}
