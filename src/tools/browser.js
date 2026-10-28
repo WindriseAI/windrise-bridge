@@ -19,8 +19,20 @@ import { Capability } from "../core/registry.js";
 import { JEV_MAX_CRITERIA, askJev, decideFromAnswer, extractChoices } from "../core/jev-choice.js";
 import { CONTROL_STATE_LABELS, prefixReturnSummary } from "../core/handoff.js";
 
-const DISCOVERY_DIR = process.env.BRIDGE_DATA_HOME?.trim() || path.join(os.homedir(), ".bridge-replica");
-const DISCOVERY_FILE = path.join(DISCOVERY_DIR, "browser-control.json");
+/** 默认数据目录（真实 Bridge 用的那个）；测试如果没指到 .tmp 下，绝不允许连过去。 */
+const DEFAULT_DATA_HOME = path.join(os.homedir(), ".bridge-replica");
+
+/*
+ * 发现目录在每次调用时现读：测试可能临时改 BRIDGE_DATA_HOME，
+ * 更关键的是「测试环境禁止连真实端口」那道保护要在调用时判断，不能靠模块导入时的旧值。
+ */
+function discoveryDir() {
+  return process.env.BRIDGE_DATA_HOME?.trim() || DEFAULT_DATA_HOME;
+}
+
+function discoveryFile() {
+  return path.join(discoveryDir(), "browser-control.json");
+}
 
 /**
  * AI 空间的收摊提醒（用户 2026-10-28 定：AI 用完浏览器必须关掉，不然吃大量内存）。
@@ -51,14 +63,15 @@ async function discoverAll() {
     } catch { return null; }
   };
 
-  const main = await readOne(DISCOVERY_FILE);
+  const main = await readOne(discoveryFile());
   if (main) candidates.push(main);
 
-  const files = await readdir(DISCOVERY_DIR).catch(() => []);
+  const dir = discoveryDir();
+  const files = await readdir(dir).catch(() => []);
   const perPid = files.filter((f) => /^browser-control-\d+\.json$/.test(f));
   const rest = [];
   for (const name of perPid) {
-    const parsed = await readOne(path.join(DISCOVERY_DIR, name));
+    const parsed = await readOne(path.join(dir, name));
     // 主文件已经收过了就别重复
     if (parsed && !candidates.some((c) => c.url === parsed.url)) rest.push(parsed);
   }
@@ -97,12 +110,70 @@ async function discoverLive() {
   return null;
 }
 
-async function callControl(action, params = {}, { method = "POST", timeoutMs = 30_000 } = {}) {
+/** 是不是跑在 node:test / 测试环境里（两个标记任意一个都算）。 */
+function isTestRun() {
+  return process.env.NODE_TEST_CONTEXT !== undefined
+    || process.env.NODE_ENV === "test"
+    || process.argv.includes("--test")
+    || /\.test\.(?:c|m)?js$/i.test(String(process.argv[1] ?? ""));
+}
+
+/** dir 是不是在系统临时目录（仓库里就是 .tmp/）下面。 */
+function insideTemp(dir) {
+  try {
+    const root = path.resolve(os.tmpdir());
+    const target = path.resolve(String(dir ?? ""));
+    const rel = path.relative(root, target);
+    return rel === "" || (!rel.startsWith("..") && !path.isAbsolute(rel));
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * 测试安全闸门：测试里如果没注入 discoverLive、数据目录又不在 .tmp 下，
+ * 说明 callControl 会去读真实用户的发现文件、连正在运行的 Bridge —— 直接抛错，
+ * 绝不向用户的浏览器发真实点击。测试要连控制服务就用独立 BRIDGE_DATA_HOME（.tmp 下）
+ * 或显式注入 discoverLive。
+ */
+function assertTestControlAllowed(discover) {
+  if (!isTestRun()) return;
+  if (discover !== discoverLive) return; // 显式注入了发现逻辑：由测试自己负责指向假服务
+  if (insideTemp(discoveryDir())) return; // 测试自己起的假控制服务（数据目录在 .tmp 下）
+  const error = new Error(
+    `测试环境禁止连接真实浏览器控制服务：callControl 没有注入 discoverLive，当前发现目录是「${discoveryDir()}」，` +
+    "可能指向正在运行的 Bridge。测试里请注入假 discoverLive，或把 BRIDGE_DATA_HOME 指到 .tmp 下的独立目录。",
+  );
+  error.code = "BROWSER_UNAVAILABLE";
+  error.dispatched = false;
+  error.testGuard = true;
+  throw error;
+}
+
+async function callControl(action, params = {}, {
+  method = "POST",
+  timeoutMs = 30_000,
+  discover = discoverLive,
+  fetchImpl = fetch,
+} = {}) {
+  /*
+   * 前置失败（发现文件不存在 / 探活失败 / 连接被拒）都发生在请求真正发出去之前 —— 这件事
+   * 一个字节都没发到页面。带 code: BROWSER_UNAVAILABLE + dispatched:false，调用方（例如
+   * flow_replay）据此如实说「事件没有发出」，而不是「可能已经发出、只是没收到回执」。
+   */
+  const unavailable = (message, cause = null) => {
+    const error = new Error(message);
+    error.code = "BROWSER_UNAVAILABLE";
+    error.dispatched = false;
+    error.cause = cause;
+    return error;
+  };
+  assertTestControlAllowed(discover);
   // 用 discoverLive：多实例时可能有好几个候选，陈旧的会连不上，
   // 挑一个活着的不然每次调用都白跑一趟
-  const discovery = await discoverLive();
+  const discovery = await discover();
   if (!discovery) {
-    throw new Error(
+    throw unavailable(
       "浏览器控制服务没有运行。它是随控制面板一起启动的 —— 请先打开 Windrise Bridge 界面（npm run ui），" +
       "再重试。纯命令行模式下这些工具用不了，因为账号窗口由 Windrise 主程序启动。"
     );
@@ -110,7 +181,7 @@ async function callControl(action, params = {}, { method = "POST", timeoutMs = 3
   const url = `${discovery.url}/${action}`;
   let response;
   try {
-    response = await fetch(url, {
+    response = await fetchImpl(url, {
       method,
       headers: { "content-type": "application/json" },
       body: method === "POST" ? JSON.stringify(params) : undefined,
@@ -120,6 +191,15 @@ async function callControl(action, params = {}, { method = "POST", timeoutMs = 3
   } catch (error) {
     if (error.name === "TimeoutError" || error.name === "AbortError") {
       throw new Error(`浏览器操作「${action}」超过 ${Math.round(timeoutMs / 1000)} 秒没有返回。窗口可能被遮挡或页面卡住了，可以先用 browser_snapshot 看页面状态。`);
+    }
+    /*
+     * ECONNREFUSED / ENOTFOUND：连接在 TCP 层就被拒，请求没发到控制服务 —— 事件确定没发出。
+     * 连接重置 / 中途断开（ECONNRESET / EPIPE 等）时可能已经发出去一部分，只能算「不确定」，保持普通错误。
+     */
+    const refused = error?.cause?.code === "ECONNREFUSED" || error?.code === "ECONNREFUSED"
+      || error?.cause?.code === "ENOTFOUND" || error?.code === "ENOTFOUND";
+    if (refused) {
+      throw unavailable(`连不上浏览器控制服务（${error.message}），请求没有发出去：界面可能已经关掉了，先打开 Windrise Bridge 界面再重试。`, error.cause ?? error);
     }
     throw new Error(`连不上浏览器控制服务（${error.message}）。界面可能已经关掉了。`);
   }
@@ -1309,5 +1389,5 @@ export async function browserControlStatus() {
   };
 }
 
-/** 软件控制（src/tools/app.js）也走这条通道 */
-export { callControl };
+/** 软件控制（src/tools/app.js）也走这条通道；flow_replay 的重放也走它，外加 discoverLive（先确认服务活着） */
+export { callControl, discoverLive };

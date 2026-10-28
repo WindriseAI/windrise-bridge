@@ -26,6 +26,8 @@ import { defineBrowserTools, browserControlAvailable } from "./tools/browser.js"
 import { defineAppTools } from "./tools/app.js";
 import { defineFlowTools } from "./tools/flow.js";
 import { flowDraftsDir } from "./core/flow-draft.js";
+import { createCallLog } from "./core/call-log.js";
+import { createFlowStepLogger } from "./core/flow-audit.js";
 import { defineContextTools } from "./tools/context.js";
 import { installCustomTools, defineCustomToolAdmin } from "./tools/custom.js";
 
@@ -69,8 +71,19 @@ export async function boot({ roots, workspace, dataHome, onLog = () => {}, instr
   /*
    * 流程草稿：纯本地文件（<数据目录>/flows/drafts），不需要界面，所以总是挂载。
    * 放在这里而不是内置工具表里：草稿要读写 dataHome，只有 boot 知道它在哪。
+   * 重放的每一步写进单独的重放审计（<数据目录>/logs/flow-replay/），不写 mcp-calls ——
+   * 那份日志是 flow_save_draft 抽取草稿的唯一来源，写进去会污染用户真正想存的那次会话。
    */
-  registerTools(defineFlowTools({ dataHome: home }));
+  const flowCallLog = createCallLog({
+    dir: path.join(home, "logs", "flow-replay"),
+    onError: (line) => onLog({ kind: "call-log", text: line }),
+  });
+  /**
+   * 重放的审计（复用 call-log 的脱敏 / 追加逻辑）：step / refused / end 都落盘。
+   * 只记步骤号 / 动作 / 按键 / 目标 / 原因 / 汇总，不记任何输入值（values / vars 一个都不传）。
+   */
+  const logFlowStep = createFlowStepLogger({ callLog: flowCallLog });
+  registerTools(defineFlowTools({ dataHome: home, logStep: logFlowStep }));
 
   // 浏览器工具只在控制面板开着的时候挂上去（窗口只能由 Electron 主进程创建）
   let browserTools = 0;

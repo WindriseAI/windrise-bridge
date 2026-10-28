@@ -79,6 +79,9 @@ export function classifyAction(action) {
 /** 工具名 → 这次调用的动作分级；不认识的工具返回 null（不进审计，也不套闸门）。 */
 const TOOL_CLASS = new Map([
   ["page_act", (args) => classifyAction(args?.action)],
+  // 重放草稿：默认只预演（execute 不是 true），一个动作都不发，按只读算；
+  // 只有显式 execute:true 且 dryRun 不是 true 时才可能真的操作页面。
+  ["flow_replay", (args) => (args?.execute === true && args?.dryRun !== true ? MUTATING : READ)],
   ["browser_nav", (args) => classifyAction(args?.action)],
   ["browser_click", () => MUTATING],
   ["browser_type", () => MUTATING],

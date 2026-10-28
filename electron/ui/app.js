@@ -2220,6 +2220,13 @@ for (const [id, key] of [["opt-approve", "approve"], ["opt-readonly", "readonlyA
   });
 }
 
+// 流程回放执行开关：默认关（只预演）；打开后 flow_replay 带 execute:true 才真的点页面
+$("opt-flow-replay-execute").addEventListener("change", async () => {
+  const result = await api.settingsSet({ flowReplayExecute: $("opt-flow-replay-execute").checked });
+  if (result?.ok === false) return toast(`保存失败：${result.error}`);
+  toast($("opt-flow-replay-execute").checked ? "已打开：重启 Bridge 后可真正执行流程回放" : "已关闭：流程回放只做预演", "ok");
+});
+
 // 工具档位：存进设置，Bridge 启动时按它过滤 tools/list
 $("set-tool-tier").addEventListener("change", async () => {
   const tier = $("set-tool-tier").value === "full" ? "full" : "basic";
@@ -2281,6 +2288,7 @@ function renderStartupSettings(snap) {
     el.checked = Boolean(value);
   };
   check("set-tunnel-auto", tunnel.autoStart);
+  check("opt-flow-replay-execute", saved.flowReplayExecute === true);
   check("set-auto-bridge", saved.autoStartBridge !== false);
   check("set-autolaunch", saved.autoLaunch);
   check("set-auto-connect", saved.autoConnect);

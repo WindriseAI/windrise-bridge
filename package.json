@@ -15,14 +15,14 @@
     "context": "node src/context-bus-selftest.mjs",
     "external": "node src/external-mcp-selftest.mjs",
     "tunnel": "node src/standalone.js --tunnel",
-    "check:clickable": "node tools/run-clickable-tests.mjs",
-    "check:vendor": "node tools/run-vendor-tests.mjs",
     "ui": "electron .",
     "ui:eval": "electron . --allow-eval",
     "ui:debug": "electron --remote-debugging-port=9223 .",
     "dist": "node scripts/build.mjs",
     "dist:dir": "node scripts/build.mjs --dir",
-    "verify:packaged": "pwsh -NoProfile -File scripts/verify-packaged.ps1"
+    "verify:packaged": "pwsh -NoProfile -File scripts/verify-packaged.ps1",
+    "check:clickable": "node tools/run-clickable-tests.mjs",
+    "check:vendor": "node tools/run-vendor-tests.mjs"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.29.0",

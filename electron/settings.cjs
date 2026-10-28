@@ -58,6 +58,11 @@ const DEFAULTS = {
   closeToTray: true,
   /** 显示 AI 光标和控制条：AI 操作网页时在页面上画虚拟光标、顶部提示和「接管 / 终止任务」按钮 */
   showAgentCursor: true,
+  /**
+   * 流程回放允许真正执行（默认关）：关着时 flow_replay 只做预演、列出步骤和不支持项，一步都不执行；
+   * 带 execute:true 会返回 FEATURE_DISABLED。打开后才允许真正操作页面。
+   */
+  flowReplayExecute: false,
   /** 新装的插件自动装到所有格子（默认开）：关掉后新插件只在侧边栏列出来，等人手动点「装到所有格子」 */
   extAutoSync: true,
   /** AI 空间空闲多久自动收摊（分钟）：5 / 10 / 30；0 = 永不（不关闭，空闲 10 分钟后只卸载后台标签页） */

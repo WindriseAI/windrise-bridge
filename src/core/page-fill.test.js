@@ -414,7 +414,7 @@ test("page-fill 的注释不再承诺「参数错整次拒绝」：结构错整�
   assert.match(source, /逐项拒绝/);
 });
 
-test("真 Chromium 的批量填表探针交给分层 runner 跑（公开版不带 _probe 探针）", () => {
+test("页面批量填写的其它回归用例由 src/core/page-fill 的单元测试覆盖（不再依赖 _probe 探针）", () => {
   const source = readFileSync(path.join(path.dirname(fileURLToPath(import.meta.url)), "page-fill.js"), "utf8");
   assert.ok(source.length > 0);
 });

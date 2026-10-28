@@ -18,6 +18,12 @@ const FILE_PATTERN = /^mcp-calls-\d{4}-\d{2}-\d{2}\.jsonl$/;
 /** 键名命中这些词的参数值不落原文（前后都能有别的字母，比如 myToken / user_password） */
 const SENSITIVE_KEY = /pass|secret|token|cookie|auth|credential|otp|apikey|api_key|private/i;
 /**
+ * 流程重放的变量表（flow_replay 的 vars）：键名是用户起的变量名（姓名 / 电话 / 密码…），
+ * 不能按「键名命中 SENSITIVE_KEY」判断。flow_replay 的 description 里写明了 secret 只在内存里用、
+ * 不进日志，所以这里整块按输入内容处理，只记个数，绝不记值。
+ */
+const VARS_KEY = /^vars$/i;
+/**
  * 往网页里输入的内容（page_act 的 text、表单的 value 等）只记长度：
  * 桥不知道对面是不是密码框，键名又是普通的 text，靠键名打码拦不住。
  */
@@ -47,6 +53,11 @@ export function numOrNull(value) {
     }
     if (TYPED_KEY.test(key) && typeof value === "string") {
       summary[key] = `[输入内容，${value.length} 字]`;
+      continue;
+    }
+    if (VARS_KEY.test(key) && value && typeof value === "object") {
+      // 变量名可以记（「用了哪些变量」对排查有用），变量的值一个都不记
+      summary[key] = `[${Object.keys(value).length} 个变量，值不记]`;
       continue;
     }
     summary[key] = summarizeValue(value);

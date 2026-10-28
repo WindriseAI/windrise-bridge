@@ -11,36 +11,31 @@ build/bin/
 build/browser/
 
 # 改代码前的备份（里面有旧版代码和预置凭据）
-_backup/
 
 # 密钥、口令、激活码、数据库：绝不进仓库
 **/*.pem
-**/*.key
 **/.env*
-**/*.p12
-**/*.pfx
-server/codes/
-server/data/
-server/keys/
 **/*.csv
-**/*.sqlite
-**/*.sqlite3
-**/*.db
 
 # 探针运行产物
-_probe/video-lab/
 
 # 2026-10-25 建本地仓库时补的
 data.safe-shell-*/
 data.*/
-_probe/swap-*/
-_probe/**/*.bin
 *.bak-*
 **/owner-auth.json*
 **/route-token.json*
-_smoke/*.json
-_smoke/*.txt
-_smoke/*.log
 
-# 本地临时目录（测试用 BRIDGE_DATA_HOME 等往这里写）
+# 本 worktree 的一次性验收脚本与数据（真机实测用，不入库）
+.tmp/e2e-flow/
+
+server/
+.env
+.env.*
+*.key
+*.p12
+*.pfx
+*.sqlite
+*.sqlite3
+*.db
 .tmp/

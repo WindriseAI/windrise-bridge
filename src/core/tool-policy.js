@@ -54,6 +54,8 @@ export const TOOL_GROUP_OVERRIDES = Object.freeze({
 
   // 写：会改页面、改窗口状态或改文件
   page_act: ToolGroup.WRITE,
+  // 重放草稿 = 连着点 / 填一串写动作，按写处理；dryRun 也一样（省得「干跑」成了绕过写权限的口子）
+  flow_replay: ToolGroup.WRITE,
   browser_click: ToolGroup.WRITE,
   browser_type: ToolGroup.WRITE,
   browser_close: ToolGroup.WRITE,

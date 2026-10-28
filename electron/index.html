@@ -476,6 +476,7 @@
           <label class="switch-row"><input type="checkbox" id="opt-agent-cursor" checked /><span>显示 AI 光标和控制条（AI 操作网页时显示虚拟光标，底部有「接管 / 终止任务」按钮）</span></label>
           <label class="switch-row" hidden><input type="checkbox" id="opt-readonly" checked /><span>只读命令自动放行</span></label>
           <label class="switch-row"><input type="checkbox" id="opt-jsonresp" /><span>MCP 用 JSON 一次性响应（只在某个客户端连不上时打开；默认边跑边回，长任务不会被 Cloudflare 100 秒掐断）</span></label>
+          <label class="switch-row"><input type="checkbox" id="opt-flow-replay-execute" /><span>流程回放允许真正执行（默认关：flow_replay 只预演、列出将要做的动作和不支持的步骤，不碰页面）</span></label>
           <label class="label" for="set-tool-tier">对外暴露的工具</label>
           <select class="input" id="set-tool-tier">
             <option value="basic">基础档：基本功能 + 浏览器操作 + 鼠标兜底</option>

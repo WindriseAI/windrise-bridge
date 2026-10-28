@@ -775,7 +775,14 @@ export function createMcpServer({ instructions, forward, beforeListTools, onTool
       const connectorContext = connector
         ? { id: connector.id, name: connector.name, profiles: [...(connector.profiles ?? [])] }
         : null;
-      const result = await tool.handler(args, { signal: requestExtra?.signal, sessionId: requestExtra?.sessionId, forward: forward ?? null, connector: connectorContext });
+      const result = await tool.handler(args, {
+        signal: requestExtra?.signal,
+        sessionId: requestExtra?.sessionId,
+        forward: forward ?? null,
+        connector: connectorContext,
+        // 运行时解析出来的格子（只给 space 的工具）也要按同一份口令作用域核对
+        scope: scope ?? null,
+      });
       const content = result.content ?? [{ type: "text", text: String(result.text ?? "") }];
       const resultBytes = measureContentBytes(content);
       const code = result.structuredContent?.code ?? null;

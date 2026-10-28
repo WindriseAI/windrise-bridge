@@ -69,6 +69,14 @@ console.log("\n=== ① 参数摘要 ===");
   // page_act 往密码框里打字时键名就是 text，只能按「输入内容」整体只记长度
   const typed = summarizeArgs({ ref: "e12", action: "type", text: "hunter2" });
   check("往网页输入的内容只记长度", typed.text === "[输入内容，7 字]" && typed.ref === "e12", JSON.stringify(typed));
+  // flow_replay 的 vars：键名是用户起的变量名，值一个都不能进日志（secret 只放内存）
+  const replay = summarizeArgs({ name: "登录", vars: { 姓名: "张三", 密码: "SuperSecret42" } });
+  const replayText = JSON.stringify(replay);
+  check(
+    "流程重放的变量表只记个数，值不进日志",
+    replay.vars === "[2 个变量，值不记]" && !replayText.includes("SuperSecret42") && !replayText.includes("张三"),
+    replayText,
+  );
 }
 
 /* ================================================================== *

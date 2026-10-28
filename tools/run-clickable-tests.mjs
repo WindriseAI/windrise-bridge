@@ -27,6 +27,9 @@
  *   - src/core/jev-choice.test.js：page_choose 的候选抽取 / 255 截断 / ratio / 无密钥报错 / 密钥不外泄。
  *   - src/core/surface-read.test.js：page_read 的 NOT_FOUND、读之前等页面就绪。
  *   - src/core/tool-policy.test.js：工具分组、口令作用域、域名 / cwd 谓词、NOT_ALLOWED 与审计字段；
+ *   - src/core/flow-draft.test.js：流程草稿抽取 / 脱敏 / 变量元数据与 secret / 站点过滤 / flow_get_draft / select 占位 / 完整路径读取 / 站点核对与 space 解析 / 重放审计；
+ *   - src/core/flow-locate.test.js：定位打分不再反向包含、同分多候选判失败、部分匹配记脆弱；
+ *   - src/core/flow-replay.test.js：重放定位打分、四态、confirm 绑定到步、fromStep 续跑、变量不回显、dryRun。
  *   - src/core/context-bus-agentmsg.test.js：子代理消息落盘回执 / 去重 / 增量拉取 / 限流 / 收件箱上限 / 任务 TTL 与状态机；
  *   - src/core/handoff.test.js：控制权状态机、交还变更摘要、审计事件字段与写入；
  *   - src/core/space-autoclose.test.js：AI 空间自动收摊（空闲关闭 / keep 只卸载 / 需要你与接管中不关 /
@@ -60,6 +63,9 @@ const files = [
   path.join(ROOT, "src", "core", "page-settle.test.js"),
   path.join(ROOT, "src", "core", "upload-guard.test.js"),
   path.join(ROOT, "src", "core", "tool-policy.test.js"),
+  path.join(ROOT, "src", "core", "flow-draft.test.js"),
+  path.join(ROOT, "src", "core", "flow-locate.test.js"),
+  path.join(ROOT, "src", "core", "flow-replay.test.js"),
   path.join(ROOT, "src", "core", "context-bus-agentmsg.test.js"),
   path.join(ROOT, "src", "core", "handoff.test.js"),
   path.join(ROOT, "src", "core", "space-autoclose.test.js"),

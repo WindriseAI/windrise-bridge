@@ -1,19 +1,4 @@
-## 项目简介
-
-Windrise Bridge 是一个 Windows 桌面应用：它在本机跑一个 MCP 服务器，把「文件读写 / 执行命令 / 语言诊断」和「多开浏览器（每个窗口一套独立登录态 + 稳定指纹）」这些能力开放给任意 MCP 客户端（ChatGPT / Claude / Cursor / Cline 等）。本机能力通过 Streamable HTTP 暴露在 `127.0.0.1` 的随机端口上，需要公网地址时再叠加一条隧道。下文是完整的功能、安装、使用和排错说明。
-
-## 许可证与来源声明
-
-- 本项目按 **GNU Affero General Public License v3.0 or later（AGPL-3.0-or-later）** 发布，全文见 [`LICENSE`](LICENSE)；第三方组件许可见 [`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md)。
-- 本项目**基于 BrowserOS（AGPL-3.0-or-later）修改**：语义快照、可访问性观察、页面转 markdown 等浏览器核心逻辑移植自 [BrowserOS](https://github.com/browseros-ai/BrowserOS)（上游提交号、许可证和逐文件清单见 `src/vendor/browseros/SOURCE.json` 与各文件头注释），另有部分驱动逻辑移植自 Ego Lite（MIT）。按 AGPL-3.0 的要求，这部分对应的源码随本仓库一并提供，许可证原文本保存在 `src/vendor/` 下对应目录中。
-- **闭源服务端不在本仓库**：激活 / 计费 / 更新检查所用的服务端程序是闭源的，不随本仓库分发。本仓库只包含桌面客户端和与之对接的接口约定；`electron/license-config.json` 里只有一个服务地址，没有任何密钥或凭据。
-
-- 「Windrise」名称和图标不随许可证授权。
-
----
-
 # Bridge Replica
-
 
 把**这台 Windows 机器**上的能力，通过 MCP 协议开放给任意 MCP 客户端（ChatGPT / Claude / Arena / Cursor / Cline …），
 外加一个「多开浏览器」面板（每个窗口一套独立登录态 + 一套稳定指纹）。
