@@ -2,7 +2,7 @@
  * 批量填表（page_act 的 fields[]）的纯 Node 测试：不碰真浏览器，用假 CDP 模拟一张表单。
  *   node --test src/core/page-fill.test.js
  *
- * 表单来自 _probe/fixtures/sensitive-form.html 的「批量填表」那一段（文本、select、
+ * 表单结构内联在本文件里（原本在 _probe/fixtures/sensitive-form.html，_probe 不随公开仓库发布）。
  * checkbox、radio、ARIA 自定义下拉、提交按钮）。断言：
  *   ① 一次调用按顺序填完全部字段，只回读一次（只有一次 diff）；
  *   ② 提交按钮被拒绝、不会被点到（批量填表不会提交）；
@@ -22,8 +22,8 @@ import { createSurfaceAct } from "./surface-act.js";
 import { MAX_FIELDS, fillFieldsOnce } from "./page-fill.js";
 import { defineBrowserTools } from "../tools/browser.js";
 
-const FIXTURE = path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "..", "_probe", "fixtures", "sensitive-form.html");
-const HTML = readFileSync(FIXTURE, "utf8");
+// 原表单在 _probe/fixtures/sensitive-form.html，_probe 不随公开仓库发布，这里内联同一份结构。
+const HTML = "<form id=\"batch-form\" onsubmit=\"return false\">\n    <label>姓名 <input id=\"bf-name\" name=\"name\" type=\"text\"></label>\n    <label>水果\n      <select id=\"bf-fruit\" name=\"fruit\">\n        <option value=\"apple\">苹果</option>\n        <option value=\"banana\">香蕉</option>\n        <option value=\"cherry\">樱桃</option>\n      </select>\n    </label>\n    <label><input id=\"bf-agree\" name=\"agree\" type=\"checkbox\"> 同意条款</label>\n    <fieldset>\n      <legend>套餐</legend>\n      <label><input id=\"bf-plan-pro\" name=\"plan\" type=\"radio\" value=\"pro\"> Pro 套餐</label>\n      <label><input id=\"bf-plan-basic\" name=\"plan\" type=\"radio\" value=\"basic\"> 基础套餐</label>\n    </fieldset>\n    <label>城市\n      <div id=\"bf-city\" role=\"combobox\" aria-haspopup=\"listbox\" aria-expanded=\"false\"\n           aria-label=\"城市\" tabindex=\"0\">请选择城市</div>\n    </label>\n    <div id=\"bf-city-list\" role=\"listbox\" aria-label=\"城市选项\" hidden>\n      <div role=\"option\">北京</div>\n      <div role=\"option\">上海</div>\n      <div role=\"option\">广州</div>\n    </div>\n    <button id=\"bf-submit\" type=\"submit\">提交</button>\n  </form>\n";
 const FORM = /<form id="batch-form"[\s\S]*?<\/form>/.exec(HTML)?.[0] ?? "";
 
 /* ---------------- 从 fixture 里读表单定义，测试和测试页共用一份 ---------------- */
@@ -414,9 +414,9 @@ test("page-fill 的注释不再承诺「参数错整次拒绝」：结构错整�
   assert.match(source, /逐项拒绝/);
 });
 
-test("页面批量填写的其它回归用例由 src/core/page-fill 的单元测试覆盖（不再依赖 _probe 探针）", () => {
-  const source = readFileSync(path.join(path.dirname(fileURLToPath(import.meta.url)), "page-fill.js"), "utf8");
-  assert.ok(source.length > 0);
+test("批量填表探针接进了 run-all-checks（修前没有任何 runner 会跑到真 Chromium 那份）", () => {
+  const source = readFileSync(path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "..", "tools", "run-all-checks.mjs"), "utf8");
+  assert.match(source, /_probe\/page-fill-batch-selftest\.mjs/);
 });
 
 test("page_act 的工具说明和 schema 写清了 fields 用法（含不会提交、最多 30 项）", () => {
